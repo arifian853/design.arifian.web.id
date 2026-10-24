@@ -19,29 +19,33 @@ const samples = [
 export default function Workbench({ source }: { source: string }) {
   const [profiles, setProfiles] = useState<DesignProfile[]>([]);
   const [selected, setSelected] = useState('');
-  const [status, setStatus] = useState('Loading public sample profiles…');
+  const [status, setStatus] = useState('Loading private design profiles…');
   const [query, setQuery] = useState('');
   const [saved, setSaved] = useState(false);
   const [staticMode, setStaticMode] = useState(false);
   const reduced = useSyncExternalStore(subscribeMotion, motionSnapshot, () => true);
   useEffect(() => {
+    if (!source) {
+      setStatus('Private design profiles are not available from this public page. Use the owner-only local preview to inspect the real Subtle and Terracotta specimens.');
+      return;
+    }
     const controller = new AbortController();
     fetch(source, { signal: controller.signal, cache: 'no-store', credentials: 'omit' })
       .then(response => { if (!response.ok) throw new Error('Unavailable'); return response.json(); })
       .then(data => { const items = parseProfiles(data); setProfiles(items); setSelected(items[0].key); setStatus(''); })
-      .catch(() => { if (!controller.signal.aborted) setStatus('Public sample profiles could not be loaded. Refresh to try again.'); });
+      .catch(() => { if (!controller.signal.aborted) setStatus('Private design profiles are not available from this public page. Start the owner-only loopback preview to inspect the real Subtle and Terracotta specimens.'); });
     return () => controller.abort();
   }, [source]);
   const profile = profiles.find(item => item.key === selected);
-  if (!profile) return <section className="locked"><h1>Design workbench</h1><p role="status">{status}</p></section>;
+  if (!profile) return <section className="library-boundary"><h1>Design workbench</h1><p role="status">{status}</p></section>;
   const state = applyProfile(profile, reduced !== false || staticMode);
   const rows = samples.filter(item => `${item.name} ${item.kind}`.toLowerCase().includes(query.toLowerCase()));
   return <MotionConfig reducedMotion={state.duration ? "never" : "always"}>
     <div className="workbench" data-recipe={state.recipe} data-motion={state.duration ? 'active' : 'static'} style={state.style as CSSProperties}>
       <a className="skip-link" href="#specimen">Skip to specimen</a>
       <header className="bench-header">
-        <a className="wordmark" href="#specimen">Public workbench demo</a>
-        <p className="local-note">Original sample profiles</p>
+        <a className="wordmark" href="#specimen">Design workbench</a>
+        <p className="local-note">Owner-only source preview</p>
         <nav aria-label="Workbench"><a href="#specimen">Specimen</a><a href="#collection">Collection</a><a href="#changes">Profile details</a></nav>
       </header>
       <aside className="controls" aria-label="Specimen controls">
@@ -80,7 +84,7 @@ export default function Workbench({ source }: { source: string }) {
         <section className="profile-details" id="changes" aria-labelledby="details-title"><h2 id="details-title">What changed</h2>
           <dl>{[['Composition',state.recipe === 'flow' ? 'Flow with side controls' : 'Tiles with top controls'], ['Typography', 'Profile heading and body families'], ['Shape', 'Profile corners and border weight'], ['Surface', 'Profile fill and elevation'], ['Density', 'Profile spacing and panel padding'], ['Motion', state.duration ? 'Profile transition timing' : 'Static fallback']].map(([term,description]) => <div key={term}><dt>{term}</dt><dd>{description}</dd></div>)}</dl>
         </section>
-        <footer>Interactive public demo with original sample profiles. Private source documents are not included.</footer>
+        <footer>Private source documents are not included in this preview. Profile styling is loaded only by the owner-only local preview.</footer>
       </section>
     </div>
   </MotionConfig>;

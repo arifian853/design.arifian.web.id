@@ -69,14 +69,29 @@ for (const viewport of [{width:1440,height:1000}, {width:390,height:844}]) {
     expect(errors.length).toBe(0); expect(external.length).toBe(0);
   });
 }
-test('public workbench loads only its two original demonstration profiles', async ({page}) => {
+test('local owner preview uses the planned source profiles, not invented public themes', async ({page}) => {
   await page.goto('/');
-  await expect(page.getByRole('heading',{name:'Keep room for ideas.'})).toBeVisible();
-  await expect(page.getByRole('link',{name:'Public workbench demo'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'See the design before you build it.'})).toBeVisible();
+  await expect(page.getByRole('link',{name:'Design workbench'})).toBeVisible();
   const profile = page.getByLabel('Design profile');
-  await expect(profile.locator('option')).toHaveText(['Paper Current','Studio Ember']);
-  await expect(page.locator('.locked')).toHaveCount(0);
+  const options = profile.locator('option');
+  await expect(options).toHaveCount(2);
+  const labels = await options.allTextContents();
+  expect(new Set(labels).size).toBe(2);
+  await expect(page.locator('.library-boundary')).toHaveCount(0);
   await expect(page.locator('.workbench footer')).toContainText('Private source documents are not included');
+});
+
+test('static production page explains the private design boundary without requesting profile data', async ({page}) => {
+  const profileRequests: string[] = [];
+  page.on('request', request => {
+    if (request.url().includes('__local/specimens') || request.url().endsWith('/specimens.json')) profileRequests.push('private profile request');
+  });
+  await page.goto('/');
+  await expect(page.getByRole('heading',{name:'See the design before you build it.'})).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('Private design profiles are not available from this public page');
+  await expect(page.locator('#profile')).toHaveCount(0);
+  expect(profileRequests).toEqual([]);
 });
 
  test('OS and manual reduced motion both disable animation completely', async ({page}) => {
