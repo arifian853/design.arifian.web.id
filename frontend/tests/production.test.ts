@@ -5,8 +5,9 @@ const built = existsSync('dist/index.html');
 test.skipIf(!built)('static output is locked and has no private loader or endpoint reference', () => {
   const html = readFileSync('dist/index.html','utf8');
   expect(html.includes('Collection locked')).toBe(true);
+  expect(html.includes('See the design<br/>before you build it.')).toBe(true);
   expect(html.includes('noindex, nofollow')).toBe(true);
-  expect(html.includes('astro-island')).toBe(false);
+  expect(html.includes('astro-island')).toBe(true);
   function scan(dir: string): void {
     for (const entry of readdirSync(dir, {withFileTypes:true})) {
       const path = join(dir,entry.name);

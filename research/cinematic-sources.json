@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://motion.dev/docs/react-scroll-animations",
+      "title": "Motion React scroll animations",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": 2,
+      "url": "https://motion.dev/docs/react-accessibility",
+      "title": "Motion accessibility and reduced motion",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": 3,
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html",
+      "title": "W3C WCAG 2.3.3 animation from interactions",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": 4,
+      "url": "https://developer.chrome.com/blog/nrk-casestudy",
+      "title": "Chrome for Developers: NRK scroll storytelling case study",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": 5,
+      "url": "https://developer.chrome.com/blog/scroll-animation-performance-case-study",
+      "title": "Chrome for Developers: scroll animation performance case study",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": 6,
+      "url": "https://webkit.org/blog/17101/a-guide-to-scroll-driven-animations-with-just-css",
+      "title": "WebKit: CSS scroll-driven animations guide",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": 7,
+      "url": "https://www.awwwards.com/sites/atmospherik",
+      "title": "Awwwards: Atmospherik",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": 8,
+      "url": "https://www.awwwards.com/sites/working-stiff-films",
+      "title": "Awwwards: Working Stiff Films",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": 9,
+      "url": "https://www.awwwards.com/inspiration/scroll-driven-case-study-system-with-cinematic-panels-manet-1",
+      "title": "Awwwards: MANET cinematic scroll panels",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": 10,
+      "url": "https://www.awwwards.com/inspiration/fullscreen-case-studies-sticky-scroll-animation-noxediem-creative-production",
+      "title": "Awwwards: Noxediem sticky-scroll case studies",
+      "accessed": "2026-10-24"
+    }
+  ]
+}

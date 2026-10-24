@@ -33,7 +33,7 @@ export default function Workbench({ source }: { source: string }) {
     return () => controller.abort();
   }, [source]);
   const profile = profiles.find(item => item.key === selected);
-  if (!profile) return <main className="locked"><h1>Design workbench</h1><p role="status">{status}</p></main>;
+  if (!profile) return <section className="locked"><h1>Design workbench</h1><p role="status">{status}</p></section>;
   const state = applyProfile(profile, reduced !== false || staticMode);
   const rows = samples.filter(item => `${item.name} ${item.kind}`.toLowerCase().includes(query.toLowerCase()));
   return <MotionConfig reducedMotion={state.duration ? "never" : "always"}>
@@ -54,7 +54,7 @@ export default function Workbench({ source }: { source: string }) {
         <p className="quiet">Two profiles. One set of sample content.</p>
         <p role="status" className="selection-status">Selected: {profile.label}. {state.recipe === 'flow' ? 'Flow composition' : 'Tile composition'}. {state.duration ? 'Motion enabled' : 'Static motion'}.</p>
       </aside>
-      <main id="specimen" tabIndex={-1} className="specimen">
+      <section id="specimen" tabIndex={-1} className="specimen">
         <section className="intro" aria-labelledby="intro-title">
           <div><p className="quiet">A personal collection</p><h1 id="intro-title">Keep room<br />for ideas.</h1></div>
           <div className="intro-copy"><p>A little space for things worth reading, making, and returning to.</p>
@@ -81,7 +81,7 @@ export default function Workbench({ source }: { source: string }) {
           <dl>{[['Composition',state.recipe === 'flow' ? 'Flow with side controls' : 'Tiles with top controls'], ['Typography', 'Profile heading and body families'], ['Shape', 'Profile corners and border weight'], ['Surface', 'Profile fill and elevation'], ['Density', 'Profile spacing and panel padding'], ['Motion', state.duration ? 'Profile transition timing' : 'Static fallback']].map(([term,description]) => <div key={term}><dt>{term}</dt><dd>{description}</dd></div>)}</dl>
         </section>
         <footer>Local preview only. Named fonts use installed fonts with system fallbacks. No documents are published.</footer>
-      </main>
+      </section>
     </div>
   </MotionConfig>;
 }

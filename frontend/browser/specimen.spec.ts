@@ -35,7 +35,7 @@ for (const viewport of [{width:1440,height:1000}, {width:390,height:844}]) {
       await page.locator('#profile').selectOption({index});
       await expect(page.locator('.workbench')).toHaveAttribute('data-recipe',index ? 'tiles' : 'flow');
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      await expect(page.getByRole('heading',{level:1})).toBeVisible();
+      await expect(page.locator('#workbench .intro h1')).toBeVisible();
       await page.getByRole('button',{name:'Save collection',exact:true}).click();
       await expect(page.getByRole('button',{name:'Saved to collection'})).toHaveAttribute('aria-pressed','true');
       await page.getByRole('button',{name:'Saved to collection'}).click();
