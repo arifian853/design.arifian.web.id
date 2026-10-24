@@ -1,0 +1,14 @@
+[build]
+  base = "frontend"
+  command = "bun install --frozen-lockfile && bun run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22.23.4"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"

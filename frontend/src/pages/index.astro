@@ -1,0 +1,18 @@
+---
+import '../styles/global.css';
+import Workbench from '../components/Workbench';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="A private design workbench. Authorized access is required to load design profiles." />
+    <title>Design workbench</title>
+  </head>
+  <body>
+    {import.meta.env.DEV ? <Workbench client:only="react" source="/__local/specimens" /> : <main class="locked"><p>Design workbench</p><h1>Collection locked</h1><p>Design profiles require authorized access. No design documents are included in this build.</p></main>}
+    <noscript><p>Interactive local specimens require JavaScript.</p></noscript>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+# Secrets and local-only project material
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.sqlite
+*.sqlite3
+*.db
+
+# Private brief, project state, and source design documents
+/ImplementationPlan.md
+/ProjectTimeline.md
+/ImplementationStatus.md
+/design-systems/
+/.agents/skills/
+/private/
+/data/private/
+/research/private/
+/docs/internal/
+
+# Build outputs and installed dependencies
+node_modules/
+dist/
+.astro/
+.netlify/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Local editor / OS files
+.DS_Store
+.idea/
+.vscode/
