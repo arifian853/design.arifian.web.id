@@ -8,6 +8,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:public": "bun run build && bun run scripts/export-public-specimens.ts",
+    "export:public-specimens": "bun run scripts/export-public-specimens.ts",
     "preview": "astro preview",
     "astro": "astro",
     "test": "bun test tests",

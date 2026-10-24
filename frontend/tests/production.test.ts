@@ -2,16 +2,19 @@ import { expect, test } from 'bun:test';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 const built = existsSync('dist/index.html');
-test.skipIf(!built)('static output keeps the design library private and excludes synthetic substitute profiles', () => {
+test.skipIf(!built)('public build exports only the explicitly approved live specimens', () => {
   const html = readFileSync('dist/index.html','utf8');
-  expect(html.includes('Collection locked')).toBe(false);
-  expect(html.includes('/specimens.json')).toBe(false);
-  expect(existsSync('dist/specimens.json')).toBe(false);
   const bundles = readdirSync('dist/_astro').filter((name: string) => name.endsWith('.js')).map((name: string) => readFileSync(join('dist/_astro',name),'utf8')).join('');
-  expect(bundles.includes('Paper Current')).toBe(false);
-  expect(bundles.includes('Studio Ember')).toBe(false);
-  expect(bundles.includes('Public workbench demo')).toBe(false);
-  expect(html.includes('/__local/specimens')).toBe(false);
+  const payloadPath = 'dist/design-specimens.json';
+  expect(existsSync(payloadPath)).toBe(true);
+  const profiles = JSON.parse(readFileSync(payloadPath,'utf8'));
+  expect(profiles).toHaveLength(2);
+  expect(profiles.map((profile: {label:string}) => profile.label)).toEqual(['Rosewood / Subtle','Terracotta']);
+  expect(profiles.map((profile: {key:string}) => profile.key)).toEqual(['rosewood-subtle','terracotta']);
+  const approvedKeys = ['colors','density','key','label','motion','recipe','shape','typography'];
+  for (const profile of profiles) expect(Object.keys(profile).sort()).toEqual([...approvedKeys].sort());
+  expect(html.includes('/design-specimens.json')).toBe(true);
+  expect(bundles.includes('Private design profiles are not available from this public page')).toBe(false);
   expect(html.includes('See the design<br/>before you build it.')).toBe(true);
   expect(html.includes('noindex, nofollow')).toBe(true);
   expect(html.includes('astro-island')).toBe(true);

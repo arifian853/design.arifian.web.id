@@ -26,14 +26,14 @@ export default function Workbench({ source }: { source: string }) {
   const reduced = useSyncExternalStore(subscribeMotion, motionSnapshot, () => true);
   useEffect(() => {
     if (!source) {
-      setStatus('Private design profiles are not available from this public page. Use the owner-only local preview to inspect the real Subtle and Terracotta specimens.');
+      setStatus('Public specimen preview is not configured.');
       return;
     }
     const controller = new AbortController();
     fetch(source, { signal: controller.signal, cache: 'no-store', credentials: 'omit' })
       .then(response => { if (!response.ok) throw new Error('Unavailable'); return response.json(); })
       .then(data => { const items = parseProfiles(data); setProfiles(items); setSelected(items[0].key); setStatus(''); })
-      .catch(() => { if (!controller.signal.aborted) setStatus('Private design profiles are not available from this public page. Start the owner-only loopback preview to inspect the real Subtle and Terracotta specimens.'); });
+      .catch(() => { if (!controller.signal.aborted) setStatus('Public specimen data is unavailable. Refresh to try again.'); });
     return () => controller.abort();
   }, [source]);
   const profile = profiles.find(item => item.key === selected);
@@ -45,7 +45,7 @@ export default function Workbench({ source }: { source: string }) {
       <a className="skip-link" href="#specimen">Skip to specimen</a>
       <header className="bench-header">
         <a className="wordmark" href="#specimen">Design workbench</a>
-        <p className="local-note">Owner-only source preview</p>
+        <p className="local-note">Two curated source profiles</p>
         <nav aria-label="Workbench"><a href="#specimen">Specimen</a><a href="#collection">Collection</a><a href="#changes">Profile details</a></nav>
       </header>
       <aside className="controls" aria-label="Specimen controls">
@@ -77,14 +77,14 @@ export default function Workbench({ source }: { source: string }) {
             <figure><figcaption className="sr-only">Monday 3, Tuesday 7, Wednesday 4, Thursday 9, Friday 6 notes.</figcaption><div className="chart" aria-hidden="true">{[3,7,4,9,6].map((value, index) => <div className="chart-column" key={index}><span>{value}</span><div className="bar" style={{height: `${value * 10}px`}} /><span>{['Mon','Tue','Wed','Thu','Fri'][index]}</span></div>)}</div></figure>
           </section>
           <section className="panel reflection" aria-labelledby="reflection-title"><h2 id="reflection-title">A thought to keep</h2>
-            <motion.p key={`${state.key}-${staticMode}-${reduced}`} initial={state.duration ? { opacity: 0, y: state.distance } : false} animate={{opacity: 1, y: 0}} transition={{duration: state.duration / 1000}}>Good ideas need somewhere to land.</motion.p>
+            <motion.p key={`${state.key}-${staticMode}-${reduced}`} initial={state.duration ? { opacity: 1, y: state.distance } : false} animate={{opacity: 1, y: 0}} transition={{duration: state.duration / 1000}}>Good ideas need somewhere to land.</motion.p>
             <p className="quiet">A small motion study, replayed when the profile changes.</p>
           </section>
         </div>
         <section className="profile-details" id="changes" aria-labelledby="details-title"><h2 id="details-title">What changed</h2>
           <dl>{[['Composition',state.recipe === 'flow' ? 'Flow with side controls' : 'Tiles with top controls'], ['Typography', 'Profile heading and body families'], ['Shape', 'Profile corners and border weight'], ['Surface', 'Profile fill and elevation'], ['Density', 'Profile spacing and panel padding'], ['Motion', state.duration ? 'Profile transition timing' : 'Static fallback']].map(([term,description]) => <div key={term}><dt>{term}</dt><dd>{description}</dd></div>)}</dl>
         </section>
-        <footer>Private source documents are not included in this preview. Profile styling is loaded only by the owner-only local preview.</footer>
+        <footer>These curated specimen profiles are public. Original design documents and the other source profiles remain private.</footer>
       </section>
     </div>
   </MotionConfig>;

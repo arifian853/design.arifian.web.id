@@ -15,10 +15,10 @@ import Workbench from '../components/Workbench';
   <body>
     <main id="content">
       <CinematicHome client:load />
-      <section id="workbench" class="workbench-entry" aria-label="Design workbench access boundary">
-        <Workbench client:only="react" source={import.meta.env.DEV ? '/__local/specimens' : ''} />
+      <section id="workbench" class="workbench-entry" aria-label="Interactive design specimens">
+        <Workbench client:only="react" source={import.meta.env.DEV ? '/__local/specimens' : '/design-specimens.json'} />
       </section>
     </main>
-    <noscript><p>The cinematic story remains readable without JavaScript; the private design preview requires the owner-only local preview.</p></noscript>
+    <noscript><p>The cinematic story remains readable without JavaScript; interactive design specimens require JavaScript.</p></noscript>
   </body>
 </html>

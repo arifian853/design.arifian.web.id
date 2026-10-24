@@ -69,7 +69,7 @@ for (const viewport of [{width:1440,height:1000}, {width:390,height:844}]) {
     expect(errors.length).toBe(0); expect(external.length).toBe(0);
   });
 }
-test('local owner preview uses the planned source profiles, not invented public themes', async ({page}) => {
+test('design specimen selector exposes only the two intended profiles and switches visual grammar', async ({page}) => {
   await page.goto('/');
   await expect(page.getByRole('heading',{name:'See the design before you build it.'})).toBeVisible();
   await expect(page.getByRole('link',{name:'Design workbench'})).toBeVisible();
@@ -79,19 +79,46 @@ test('local owner preview uses the planned source profiles, not invented public 
   const labels = await options.allTextContents();
   expect(new Set(labels).size).toBe(2);
   await expect(page.locator('.library-boundary')).toHaveCount(0);
-  await expect(page.locator('.workbench footer')).toContainText('Private source documents are not included');
+  await expect(page.locator('.workbench footer')).toContainText('other source profiles remain private');
 });
 
-test('static production page explains the private design boundary without requesting profile data', async ({page}) => {
+test('profile motion never fades specimen copy below readable opacity', async ({page}) => {
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await page.goto('/');
+  const select = page.getByLabel('Design profile');
+  await expect(select.locator('option')).toHaveCount(2);
+  await select.selectOption({index:1});
+  const opacities = await page.locator('.reflection > p').first().evaluate(async element => {
+    const values: number[] = [];
+    for (let i=0; i<12; i++) {
+      values.push(Number(getComputedStyle(element).opacity));
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    }
+    return values;
+  });
+  expect(Math.min(...opacities)).toBe(1);
+});
+
+test('static production page loads the approved public specimens and never requests the local endpoint', async ({page}) => {
   const profileRequests: string[] = [];
+  const profileResponses: number[] = [];
   page.on('request', request => {
-    if (request.url().includes('__local/specimens') || request.url().endsWith('/specimens.json')) profileRequests.push('private profile request');
+    if (request.url().includes('__local/specimens') || request.url().endsWith('/specimens.json')) profileRequests.push('unexpected profile endpoint');
+    if (request.url().endsWith('/design-specimens.json')) profileRequests.push('public specimen payload');
+  });
+  page.on('response', response => {
+    if (response.url().endsWith('/design-specimens.json')) profileResponses.push(response.status());
   });
   await page.goto('/');
   await expect(page.getByRole('heading',{name:'See the design before you build it.'})).toBeVisible();
-  await expect(page.getByRole('status')).toContainText('Private design profiles are not available from this public page');
-  await expect(page.locator('#profile')).toHaveCount(0);
-  expect(profileRequests).toEqual([]);
+  const options = page.locator('#profile option');
+  await expect(options).toHaveText(['Rosewood / Subtle','Terracotta']);
+  await expect(page.locator('.library-boundary')).toHaveCount(0);
+  await expect(page.locator('.workbench footer')).toContainText('These curated specimen profiles are public');
+  await page.locator('#profile').selectOption('terracotta');
+  await expect(page.locator('.workbench')).toHaveAttribute('data-recipe','tiles');
+  expect(profileRequests).toEqual(['public specimen payload']);
+  expect(profileResponses).toEqual([200]);
 });
 
  test('OS and manual reduced motion both disable animation completely', async ({page}) => {
