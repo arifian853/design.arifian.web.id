@@ -26,7 +26,12 @@ for (const viewport of [{width:1440,height:1000}, {width:390,height:844}]) {
     const errors: string[] = [];
     page.on('pageerror', () => errors.push('Browser error'));
     const external: string[] = [];
-    page.on('request', req => {if (!new URL(req.url()).hostname.match(/^(127\.0\.0\.1|localhost)$/)) external.push('External request');});
+    let sameOrigin: string | undefined;
+    page.on('request', req => {
+      const origin = new URL(req.url()).origin;
+      if (!sameOrigin && req.isNavigationRequest()) sameOrigin = origin;
+      if (sameOrigin && origin !== sameOrigin) external.push('External request');
+    });
     await page.goto('/');
     await expect(page.locator('.workbench')).toBeVisible();
     const before = await metrics(page);
@@ -64,7 +69,17 @@ for (const viewport of [{width:1440,height:1000}, {width:390,height:844}]) {
     expect(errors.length).toBe(0); expect(external.length).toBe(0);
   });
 }
-test('OS and manual reduced motion both disable animation completely', async ({page}) => {
+test('public workbench loads only its two original demonstration profiles', async ({page}) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading',{name:'Keep room for ideas.'})).toBeVisible();
+  await expect(page.getByRole('link',{name:'Public workbench demo'})).toBeVisible();
+  const profile = page.getByLabel('Design profile');
+  await expect(profile.locator('option')).toHaveText(['Paper Current','Studio Ember']);
+  await expect(page.locator('.locked')).toHaveCount(0);
+  await expect(page.locator('.workbench footer')).toContainText('Private source documents are not included');
+});
+
+ test('OS and manual reduced motion both disable animation completely', async ({page}) => {
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.goto('/');
   await expect(page.locator('.workbench')).toHaveAttribute('data-motion','static');

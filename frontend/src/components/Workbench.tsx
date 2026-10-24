@@ -19,7 +19,7 @@ const samples = [
 export default function Workbench({ source }: { source: string }) {
   const [profiles, setProfiles] = useState<DesignProfile[]>([]);
   const [selected, setSelected] = useState('');
-  const [status, setStatus] = useState('Loading local specimens…');
+  const [status, setStatus] = useState('Loading public sample profiles…');
   const [query, setQuery] = useState('');
   const [saved, setSaved] = useState(false);
   const [staticMode, setStaticMode] = useState(false);
@@ -29,7 +29,7 @@ export default function Workbench({ source }: { source: string }) {
     fetch(source, { signal: controller.signal, cache: 'no-store', credentials: 'omit' })
       .then(response => { if (!response.ok) throw new Error('Unavailable'); return response.json(); })
       .then(data => { const items = parseProfiles(data); setProfiles(items); setSelected(items[0].key); setStatus(''); })
-      .catch(() => { if (!controller.signal.aborted) setStatus('Local specimens are locked. Enable the local preview and restart on the loopback address.'); });
+      .catch(() => { if (!controller.signal.aborted) setStatus('Public sample profiles could not be loaded. Refresh to try again.'); });
     return () => controller.abort();
   }, [source]);
   const profile = profiles.find(item => item.key === selected);
@@ -40,8 +40,8 @@ export default function Workbench({ source }: { source: string }) {
     <div className="workbench" data-recipe={state.recipe} data-motion={state.duration ? 'active' : 'static'} style={state.style as CSSProperties}>
       <a className="skip-link" href="#specimen">Skip to specimen</a>
       <header className="bench-header">
-        <a className="wordmark" href="#specimen">Design workbench</a>
-        <p className="local-note">Local specimen session</p>
+        <a className="wordmark" href="#specimen">Public workbench demo</a>
+        <p className="local-note">Original sample profiles</p>
         <nav aria-label="Workbench"><a href="#specimen">Specimen</a><a href="#collection">Collection</a><a href="#changes">Profile details</a></nav>
       </header>
       <aside className="controls" aria-label="Specimen controls">
@@ -80,7 +80,7 @@ export default function Workbench({ source }: { source: string }) {
         <section className="profile-details" id="changes" aria-labelledby="details-title"><h2 id="details-title">What changed</h2>
           <dl>{[['Composition',state.recipe === 'flow' ? 'Flow with side controls' : 'Tiles with top controls'], ['Typography', 'Profile heading and body families'], ['Shape', 'Profile corners and border weight'], ['Surface', 'Profile fill and elevation'], ['Density', 'Profile spacing and panel padding'], ['Motion', state.duration ? 'Profile transition timing' : 'Static fallback']].map(([term,description]) => <div key={term}><dt>{term}</dt><dd>{description}</dd></div>)}</dl>
         </section>
-        <footer>Local preview only. Named fonts use installed fonts with system fallbacks. No documents are published.</footer>
+        <footer>Interactive public demo with original sample profiles. Private source documents are not included.</footer>
       </section>
     </div>
   </MotionConfig>;

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { MotionConfig, motion, useScroll, useTransform } from 'motion/react';
-import { Button } from '@/components/ui/button';
 
 function subscribeToReducedMotion(onChange: () => void) {
   const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -15,11 +14,10 @@ function getReducedMotionPreference() {
 export default function CinematicHome() {
   const storyRef = useRef<HTMLElement>(null);
   const systemReduced = useSyncExternalStore(subscribeToReducedMotion, getReducedMotionPreference, () => true);
-  const [motionOverride, setMotionOverride] = useState<boolean | null>(null);
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
-  const motionActive = motionOverride ?? systemReduced !== true;
-  const reducedMotion = motionOverride === null ? 'user' : motionOverride ? 'never' : 'always';
+  const motionActive = !systemReduced;
+  const reducedMotion = 'user';
   const { scrollYProgress } = useScroll();
   const { scrollYProgress: storyProgress } = useScroll({
     target: storyRef,
@@ -42,15 +40,6 @@ export default function CinematicHome() {
             <a href="#sequence">The idea</a>
             <a href="#workbench">Workbench</a>
           </nav>
-          <Button
-            variant="outline"
-            className="cinema-motion-toggle"
-            aria-pressed={motionActive}
-            disabled={!hydrated}
-            onClick={() => setMotionOverride(!motionActive)}
-          >
-            {motionActive ? 'Turn motion off' : 'Turn motion on'}
-          </Button>
         </header>
 
         <section className="cinema-hero" id="top" aria-labelledby="cinema-title">

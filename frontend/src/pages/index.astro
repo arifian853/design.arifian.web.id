@@ -15,8 +15,8 @@ import Workbench from '../components/Workbench';
   <body>
     <main id="content">
       <CinematicHome client:load />
-      <section id="workbench" class="workbench-entry" aria-label="Design workbench">
-        {import.meta.env.DEV ? <Workbench client:only="react" source="/__local/specimens" /> : <section class="locked"><p>Design workbench</p><h1>Collection locked</h1><p>Design profiles require authorized access. No design documents are included in this build.</p></section>}
+      <section id="workbench" class="workbench-entry" aria-label="Public design workbench demo">
+        <Workbench client:only="react" source="/specimens.json" />
       </section>
     </main>
     <noscript><p>Scroll story animations are optional; the workbench requires JavaScript.</p></noscript>
