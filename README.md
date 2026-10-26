@@ -1,17 +1,34 @@
-# design.arifian.web.id
+# Arifian Design System
 
-A personal design-system library and live workbench for comparing complete visual directions, component patterns, and page recipes.
+A static showcase of **Terracotta Minimalist Brutalism**: warm parchment and ivory surfaces, near-black text, terracotta accents, sharp geometry, and editorial bento layouts. Lexend Deca sets the headings; Inclusive Sans carries body text and controls.
 
-Planned frontend: Astro + React + TypeScript, Tailwind CSS, shadcn/ui source components, and Motion for React. A separately gated ElysiaJS/Bun service is planned for access-controlled catalog data and future agent integrations.
+The visual language is extracted from the portfolio’s current frontend implementation. The showcase uses synthetic projects, messages, people, and metrics to demonstrate reusable interface behavior.
 
-The workbench is intended to apply the selected design profile across its overall composition and components—not only its palette. It currently covers two distinct families: Material 3 Subtle variants and a warm Terracotta / Minimalist Brutalism direction.
+## Explore
 
-## Privacy and explicitly public specimen data
+- `/` — an introduction with working interface specimens and metadata-derived catalog counts.
+- `/foundations/` — color roles, typography, spacing, geometry, borders, focus, and motion.
+- `/components/` — searchable components, with dedicated category routes for actions, forms, navigation, feedback, overlays, data display, media, and cards/layout.
+- `/originals/` — portfolio-derived interface language and original compositions.
+- `/motion/` — bounded, replayable interaction studies with a static reduced-motion alternative.
+- `/patterns/` — composed application, messaging, AI, and editorial examples.
+- `/about/` — purpose, design principles, and provenance.
+- `/workbench/` — a clearly labeled link to the component showcase.
 
-The deployed site intentionally exposes exactly two curated runtime profiles: **Rosewood / Subtle** and **Terracotta**. Their design-profile fields (palette, typography, shape, density, composition recipe, and motion) are public and downloadable at `/design-specimens.json`; this is required for the interactive preview. The original Markdown, full source documents, remaining Subtle profiles, normalized source snapshots, credentials, and internal project notes remain private and are not in the repository or deployed artifact.
+## Implementation
 
-`frontend/scripts/export-public-specimens.ts` projects only the two approved runtime profiles from the owner-local mode-0600 normalized input into `dist/`. It does not copy source prose or other designs. The generated public payload is an ignored build artifact and must not be committed. For a release, run `bun run build:public`, inspect `dist/design-specimens.json` and scan the remaining artifact, then deploy that exact `dist/` output. The public repository contains the exporter and app code, not the private input or generated profile payload.
+Astro renders static pages. React and TypeScript provide interactive specimens, Tailwind supplies semantic styling, locally owned shadcn Base UI primitives provide accessible control anatomy, and Motion handles purposeful transitions. Dependencies remain in the existing lockfile; this redesign does not introduce a framework or install dependencies.
 
-## Development
+The project design contract is in [DESIGN.md](DESIGN.md). The [catalog documentation](docs/component-catalog.md) explains metadata, taxonomy, and how counts are derived. [Third-party notices](frontend/THIRD_PARTY_NOTICES.md) cover retained attribution and font licenses.
 
-The project uses Bun. Install dependencies with `bun install`; run scripts defined in `package.json`. Never run a deploy from this repository without release approval.
+## Local verification
+
+The existing frontend scripts cover typechecking, unit tests, static builds, privacy checks, and Playwright browser tests. Browser tests require a working local Chromium and permission to run a loopback preview. Screenshots and failure artifacts belong only in ignored local QA storage.
+
+Automated accessibility results do not replace keyboard, responsive, reduced-motion, and visual review. A blocked browser run must be reported as blocked rather than passed.
+
+## Content and release boundary
+
+The public frontend uses static showcase metadata and synthetic examples. It does not retrieve private documents, design profiles, source files, or backend catalog data. There is no public registry or component distribution workflow. No backend implementation was available for inspection, so this repository makes no claims about backend routes or an agent integration contract.
+
+The site remains `noindex`. This redesign is local and uncommitted; the README does not assert that these changes are live. Source publication, website publication, indexing, and any future authenticated catalog are separate decisions. A production release requires completed QA and explicit approval.

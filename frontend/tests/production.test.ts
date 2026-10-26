@@ -1,31 +1,55 @@
 import { expect, test } from 'bun:test';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-const built = existsSync('dist/index.html');
-test.skipIf(!built)('public build exports only the explicitly approved live specimens', () => {
-  const html = readFileSync('dist/index.html','utf8');
-  const bundles = readdirSync('dist/_astro').filter((name: string) => name.endsWith('.js')).map((name: string) => readFileSync(join('dist/_astro',name),'utf8')).join('');
-  const payloadPath = 'dist/design-specimens.json';
-  expect(existsSync(payloadPath)).toBe(true);
-  const profiles = JSON.parse(readFileSync(payloadPath,'utf8'));
-  expect(profiles).toHaveLength(2);
-  expect(profiles.map((profile: {label:string}) => profile.label)).toEqual(['Rosewood / Subtle','Terracotta']);
-  expect(profiles.map((profile: {key:string}) => profile.key)).toEqual(['rosewood-subtle','terracotta']);
-  const approvedKeys = ['colors','density','key','label','motion','recipe','shape','typography'];
-  for (const profile of profiles) expect(Object.keys(profile).sort()).toEqual([...approvedKeys].sort());
-  expect(html.includes('/design-specimens.json')).toBe(true);
-  expect(bundles.includes('Private design profiles are not available from this public page')).toBe(false);
-  expect(html.includes('See the design<br/>before you build it.')).toBe(true);
-  expect(html.includes('noindex, nofollow')).toBe(true);
-  expect(html.includes('astro-island')).toBe(true);
-  function scan(dir: string): void {
-    for (const entry of readdirSync(dir, {withFileTypes:true})) {
-      const path = join(dir,entry.name);
-      if (entry.isDirectory()) { scan(path); continue; }
-      const text = readFileSync(path,'utf8');
-      for (const forbidden of ['/__local/specimens','normalized/specimens.json','DESIGN_PRIVATE_PREVIEW','private/design-docs']) expect(text.includes(forbidden)).toBe(false);
-      expect(path.endsWith('.map')).toBe(false);
+import { catalog, catalogCounts, categories } from '../src/lib/catalog';
+
+// Artifact checks: build first; never silently skip an absent build.
+const routes = ['/', '/foundations/', '/components/', ...categories.map(c => `/components/${c.slug}/`), '/originals/', '/motion/', '/patterns/', '/about/', '/workbench/'];
+test('every showcase route is generated, readable and noindex', () => {
+  for (const route of routes) {
+    const html = readFileSync(`dist${route}index.html`, 'utf8');
+    expect(html).toContain('<h1');
+    expect(html).toContain('noindex, nofollow');
+    expect(html).toContain('data-site-header');
+    expect(html).toContain('Arifian Design System');
+  }
+  const home = readFileSync('dist/index.html', 'utf8');
+  expect(home).toContain('data-hero-specimen');
+  for (const [kind, count] of Object.entries(catalogCounts)) {
+    expect(home).toContain(`data-stat="${kind}" data-count="${count}"`);
+  }
+  expect(existsSync('dist/design-specimens.json')).toBe(false);
+});
+
+test('generated navigation, anchors and local assets resolve inside the static artifact', () => {
+  const htmlFiles: string[] = [];
+  function collect(dir: string) {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) collect(path);
+      else if (entry.name.endsWith('.html')) htmlFiles.push(path);
     }
   }
-  scan('dist');
+  collect('dist');
+  for (const file of htmlFiles) {
+    const html = readFileSync(file, 'utf8');
+    const route = file.slice(4).replace(/index\.html$/, '');
+    for (const [, href] of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
+      const url = new URL(href, `https://showcase.invalid${route}`);
+      if (url.origin !== 'https://showcase.invalid') continue;
+      const path = `dist${url.pathname.endsWith('/') ? `${url.pathname}index.html` : url.pathname}`;
+      expect(existsSync(path), `${file}: local link or asset must resolve`).toBe(true);
+      if (url.hash && path.endsWith('.html')) expect(readFileSync(path, 'utf8').includes(`id="${decodeURIComponent(url.hash.slice(1))}"`), `${file}: linked anchor must exist`).toBe(true);
+    }
+  }
+});
+
+test('every counted specimen is rendered on its linked destination', () => {
+  for (const entry of catalog) {
+    const route = entry.kind === 'component' ? `/components/${entry.category}/` : entry.kind === 'motion' ? '/motion/' : '/patterns/';
+    const html = readFileSync(`dist${route}index.html`, 'utf8');
+    expect(html).toContain(`id="${entry.slug}"`);
+    expect(html).toContain(`data-specimen="${entry.slug}"`);
+    expect(html).toContain(entry.name.replaceAll('&', '&amp;'));
+  }
 });

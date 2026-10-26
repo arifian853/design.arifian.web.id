@@ -1,0 +1,10 @@
+---
+import ShowcaseLayout from '../../layouts/ShowcaseLayout.astro';
+import ComponentCatalog from '../../components/ComponentCatalog';
+import { categories, catalogCounts } from '../../lib/catalog';
+---
+<ShowcaseLayout title="Components" description="Explore live actions, forms, navigation, feedback, overlays, data, media and layout specimens.">
+  <section class="page-intro page-width"><p class="eyebrow">THE BUILDING BLOCKS</p><h1>Components.</h1><p>{catalogCounts.components} live specimens, one visual language. Find the right part, then see how it behaves.</p></section>
+  <div class="page-width"><ComponentCatalog client:load /></div>
+  <noscript><nav class="page-width section-index" aria-label="Component categories">{categories.map(category => <a href={`/components/${category.slug}/`}>{category.name}</a>)}</nav></noscript>
+</ShowcaseLayout>

@@ -1,0 +1,5 @@
+---
+import CollectionPage from '../components/CollectionPage.astro';
+import { catalog } from '../lib/catalog';
+---
+<CollectionPage title="Patterns" eyebrow="THE PARTS, TOGETHER" description="Small application compositions for everyday tasks. Explore collections, preferences, records, conversations and project galleries with temporary sample data." entries={catalog.filter(entry => entry.kind === 'pattern')} />

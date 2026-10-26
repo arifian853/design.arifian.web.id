@@ -1,35 +1,29 @@
-# Local specimen workbench
+# Arifian Design System frontend
 
-Astro 7.4.2, React, Tailwind 4.3.3 and Bun. Dependencies and the shadcn CLI are pinned in package.json and bun.lock.
+Astro + React + TypeScript, Tailwind CSS, shadcn Base UI, and Motion. The frontend statically renders a single Terracotta Minimalist Brutalism design system with light and dark appearances.
 
-Use Node 22.23.4 for Astro; Bun manages packages:
+Use the existing pinned toolchain and lockfile. Astro requires Node 22.23.4 or a supported newer runtime; Bun manages the project scripts. No dependency installation is part of this redesign.
 
-```sh
-export PATH=/home/arifian/.local/opt/node-v22.23.4/bin:$PATH
-bun install --frozen-lockfile
-bun test tests
-bun run typecheck
-bun run build
-```
+## Structure
 
-The production build displays a locked collection. It contains no design profiles and provides no document API. Local preview needs an existing, separately authorized normalized specimen file under ignored `private/`, with mode `0600`.
+Astro pages own routing and the shared shell. React islands own local specimen interactions. Semantic CSS variables define surfaces, text, borders, states, and focus; structural surfaces have sharp corners. Locally hosted Lexend Deca and Inclusive Sans fonts include their OFL notices.
 
-```sh
-DESIGN_PRIVATE_PREVIEW=1 bun run dev -- --background --host 127.0.0.1
-bun run astro -- dev status
-bun run astro -- dev stop
-```
+Public catalog metadata contains display information and specimen identifiers. Counts and category totals come from that metadata. Examples use synthetic data and keep form, chat, and message interactions in memory. No private source is imported into the static build.
 
-The loader runs only in development with explicit opt-in, an exact loopback bind and same-origin read-only requests. It serves two schema-validated profiles from one fixed file, never Markdown or caller-supplied paths. The Vite filesystem boundary denies private files. No preview data is cached or persisted.
+## Checks
 
-The workbench changes composition, fonts, scale, corners, borders, elevation, spacing and motion in a single selection update. Sample content stays the same. Source fonts use installed fonts and system fallbacks; the specimen does not download fonts.
+The package scripts provide typecheck, unit, static build, and Playwright checks. Read the root [design contract](../DESIGN.md) and [catalog documentation](../docs/component-catalog.md) before changing specimens. Keep screenshots and browser artifacts in ignored QA storage, never in public assets.
 
-Browser checks require a local Chromium installation. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` if Playwright's default browser is unavailable. With the preview running:
+Run the development server in Astro background mode bound to loopback, as required by the frontend repository instructions. Browser verification needs permission to create local sockets and launch Chromium. If those capabilities are unavailable, typecheck, unit tests, build, and artifact audits can still run; browser accessibility, visual, responsive, and reduced-motion behavior remain unverified until a browser run succeeds.
 
-```sh
-SPECIMEN_BASE_URL=http://127.0.0.1:4321 bun run test:browser
-```
+## Boundaries
 
-Browser screenshots and failure artifacts stay under ignored `private/qa/`. Tests cover desktop/mobile, computed non-color styles, keyboard selection/focus, reduced motion, axe contrast/accessibility and the local request boundary. Test fixtures are invented independently of private documents.
+The frontend has no profile selector, source viewer, registry, public source retrieval, or backend dependency. The legacy workbench route clearly links to the component showcase. Every route stays `noindex` pending separate approval.
 
-The shadcn 4.22.1 CLI accepts the baseline as `--base base --preset nova` and resolves it to `base-nova`. Only Button and Input were generated; their styling was replaced with dynamic semantic variables. See THIRD_PARTY_NOTICES.md for review and license details. Catalog expansion and release remain separate work.
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for provenance. No commit, push, deployment, infrastructure change, or backend modification is implied by local development or a successful build.
+
+## Current verification workflow
+
+From `frontend/`, run `bun run typecheck`, `bun --bun run build:public`, then `bun test tests`. The Bun-runtime build works with the installed Bun toolchain when the shell’s default Node is below Astro’s required version. The regular build also runs the artifact audit; `build:public` is its alias. The audit reads only the fixed public asset and generated output trees, never private inputs.
+
+`bun run test:browser` selects the current redesign contract and static endpoint-boundary tests. Other browser files are retained historical coverage for the replaced UI kit; their fixed counts, profile exports and copied supplier demos describe the retired product. The new contract covers the current requirements without those obsolete assumptions. Browser test discovery (`--list`) can run without starting a server; execution, screenshots and axe remain host QA gates.

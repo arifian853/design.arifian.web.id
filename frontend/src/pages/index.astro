@@ -1,24 +1,5 @@
 ---
-import '../styles/global.css';
-import CinematicHome from '../components/CinematicHome';
-import Workbench from '../components/Workbench';
+import ShowcaseLayout from '../layouts/ShowcaseLayout.astro';
+import TerracottaPage from '../components/TerracottaPage.astro';
 ---
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="description" content="A cinematic design archive exploring visual systems through color, type, shape, composition and motion." />
-    <title>Design Archive — A visual library of complete design systems</title>
-  </head>
-  <body>
-    <main id="content">
-      <CinematicHome client:load />
-      <section id="workbench" class="workbench-entry" aria-label="Interactive design specimens">
-        <Workbench client:only="react" source={import.meta.env.DEV ? '/__local/specimens' : '/design-specimens.json'} />
-      </section>
-    </main>
-    <noscript><p>The cinematic story remains readable without JavaScript; interactive design specimens require JavaScript.</p></noscript>
-  </body>
-</html>
+<ShowcaseLayout><TerracottaPage /></ShowcaseLayout>

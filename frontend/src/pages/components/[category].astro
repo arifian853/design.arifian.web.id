@@ -1,0 +1,10 @@
+---
+import CollectionPage from '../../components/CollectionPage.astro';
+import { catalog, categories } from '../../lib/catalog';
+export function getStaticPaths() {
+  return categories.map(category => ({ params: { category: category.slug }, props: { category } }));
+}
+const { category } = Astro.props;
+const entries = catalog.filter(entry => entry.kind === 'component' && entry.category === category.slug);
+---
+<CollectionPage title={category.name} eyebrow="COMPONENT COLLECTION" description={category.summary} entries={entries} />
