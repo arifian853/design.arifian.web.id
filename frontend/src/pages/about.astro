@@ -1,5 +1,32 @@
 ---
 import ShowcaseLayout from '../layouts/ShowcaseLayout.astro';
+import { catalog, specimenHref } from '../lib/catalog';
+const portfolioEntries = catalog.filter(entry => entry.origin === 'portfolio-derived');
+const shadcnEntries = catalog.filter(entry => entry.origin === 'shadcn-adapted');
+const externalSources = [
+  {
+    name: 'React Bits', home: 'https://reactbits.dev/', licenseUrl: 'https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md',
+    license: 'MIT + Commons Clause',
+    note: 'Interaction references for Chroma Project Grid, Reveal and Text type. These implementations are authored for this system; no React Bits component source, export or Pro code is copied or redistributed.',
+    entries: catalog.filter(entry => entry.origin === 'external-inspired' && entry.reference?.startsWith('https://reactbits.dev/')),
+  },
+  {
+    name: 'Magic UI', home: 'https://magicui.design/docs/components', licenseUrl: 'https://github.com/magicuidesign/magicui/blob/main/LICENSE.md',
+    license: 'MIT',
+    note: 'Behavior references for Terminal, Code Comparison, Scroll Progress and Marquee. The showcased specimens are independent implementations, not copied Magic UI source.',
+    entries: catalog.filter(entry => entry.origin === 'external-inspired' && entry.reference?.startsWith('https://magicui.design/')),
+  },
+  {
+    name: 'Kibo UI', home: 'https://www.kibo-ui.com/', licenseUrl: 'https://github.com/shadcnblocks/kibo/blob/main/license.md',
+    license: 'MIT',
+    note: 'Behavior references for Dropzone and Tags Input. The local versions are independently authored and keep files on-device.',
+    entries: catalog.filter(entry => entry.origin === 'external-inspired' && entry.reference?.startsWith('https://www.kibo-ui.com/')),
+  },
+];
+const reviewedOnly = [
+  { name: 'Animate UI', url: 'https://animate-ui.com/docs/primitives', note: 'Reviewed as a motion reference. No Animate UI package or source code is included; canonical components use their own bounded motion behavior.' },
+  { name: 'Cult UI', url: 'https://www.cult-ui.com/docs', note: 'Reviewed for interaction ideas. No Cult UI component or source code is included, and no catalog entry is presented as a Cult UI adaptation.' },
+];
 ---
 <ShowcaseLayout title="About" description="The purpose, principles and provenance of the Arifian Design System.">
   <section class="page-intro page-width"><p class="eyebrow">ARIFIAN DESIGN SYSTEM</p><h1>About the system.</h1><p>A personal visual language for useful interfaces. Built by Arifian Saputra, with the same warm surfaces, sharp edges and editorial rhythm as the portfolio.</p></section>
@@ -7,7 +34,35 @@ import ShowcaseLayout from '../layouts/ShowcaseLayout.astro';
     <aside><p class="eyebrow">TERRACOTTA<br />MINIMALIST BRUTALISM</p><p>Room to read.<br />Clear ways forward.</p><a class="text-link" href="/foundations/">Explore the foundations ↗</a></aside>
     <div class="prose-stack"><section><h2>A system you can explore.</h2><p>The smallest decisions shape the whole interface: the weight of a heading, the edge of a field, the space before an action. This showcase brings those decisions together in working components and compositions.</p><p>The portfolio provides the visual starting point. The collection extends that language to forms, navigation, records, feedback and application patterns.</p></section>
     <section><h2>Consistency with room to adapt.</h2><p>Lexend Deca headings and Inclusive Sans body text sit on parchment and ivory. Terracotta marks moments of attention. Borders define structure; asymmetry gives larger compositions their rhythm.</p><p>Light and dark appearances share the same geometry. Keyboard focus, readable labels and a complete static motion mode are part of the design.</p></section>
-    <section><h2>Clear provenance.</h2><p>Locally customized shadcn and Base UI primitives provide the control foundation. Motion powers bounded transitions. Original compositions interpret the portfolio’s visual language using independently authored sample content.</p><p>Each specimen identifies its origin and license context. “Arifian Original” describes authorship; it does not grant a third-party license. All catalog entries remain previews pending the full browser and visual review.</p></section>
+    <section><h2>Clear provenance.</h2><p>Locally customized shadcn/ui and Base UI primitives provide the control foundation. Motion powers bounded transitions. Original compositions interpret the portfolio’s visual language using independently authored sample content.</p><p>Each specimen identifies its origin and license context. “Arifian Original” describes authorship; it does not grant a third-party license. All catalog entries remain previews pending the full browser and visual review.</p></section>
     <section><h2>A place to try things.</h2><p>Projects, people, metrics and conversations here are synthetic. Form submissions and messages stay in memory. The examples let you inspect behavior without connecting to a service.</p><div class="cluster"><a class="text-link" href="/originals/">Meet the originals ↗</a><a class="text-link" href="/patterns/">Explore patterns ↗</a></div></section></div>
   </div>
+  <section class="page-width attribution-section" aria-labelledby="attribution-heading">
+    <header class="attribution-intro"><p class="eyebrow">SOURCES &amp; INFLUENCES</p><h2 id="attribution-heading">Component origins and inspirations.</h2><p>Attribution is attached to component families, not just to the page as a whole. A source may inform a primitive or interaction without its source code being copied into this showcase.</p></header>
+    <div class="attribution-grid">
+      <article class="attribution-card" data-attribution-source="shadcn-base-ui">
+        <p class="eyebrow">ADAPTED PRIMITIVES · MIT</p><h3>shadcn/ui &amp; Base UI</h3>
+        <p>Locally customized control families use shadcn/ui patterns and Base UI primitives, restyled with this system’s tokens, typography, sharp geometry and focus treatment. Component-level references are listed below.</p>
+        <div class="attribution-links"><a href="https://ui.shadcn.com/docs/components" target="_blank" rel="noreferrer">shadcn/ui components ↗</a><a href="https://github.com/shadcn-ui/ui/blob/main/LICENSE.md" target="_blank" rel="noreferrer">shadcn/ui MIT license ↗</a><a href="https://base-ui.com/" target="_blank" rel="noreferrer">Base UI ↗</a><a href="https://github.com/mui/base-ui/blob/master/LICENSE" target="_blank" rel="noreferrer">Base UI MIT license ↗</a></div>
+        <details><summary>Browse {shadcnEntries.length} adapted families</summary><ul class="attribution-items">{shadcnEntries.map(entry => <li data-attribution-component={entry.slug}><a href={specimenHref(entry)}>{entry.name}</a>{entry.reference && <a class="attribution-reference" href={entry.reference} target="_blank" rel="noreferrer">Component reference ↗</a>}</li>)}</ul></details>
+      </article>
+      <article class="attribution-card" data-attribution-source="arifian-portfolio">
+        <p class="eyebrow">PORTFOLIO-DERIVED · OWNER-AUTHORED</p><h3>The arifian.dev portfolio</h3>
+        <p>The current portfolio implementation is the source for extracted visual behavior and reusable anatomy. This repository declares no upstream license for that source code; the specimens here are normalized, independently authored examples with synthetic content.</p>
+        <div class="attribution-links"><a href="https://github.com/arifian853/arifian853.github.io" target="_blank" rel="noreferrer">Portfolio source ↗</a></div>
+        <details><summary>Browse {portfolioEntries.length} portfolio-derived families</summary><ul class="attribution-items">{portfolioEntries.map(entry => <li data-attribution-component={entry.slug}><a href={specimenHref(entry)}>{entry.name}</a><a class="attribution-reference" href={entry.reference} target="_blank" rel="noreferrer">Portfolio source ↗</a></li>)}</ul></details>
+      </article>
+      {externalSources.map(source => <article class="attribution-card" data-attribution-source={source.name.toLowerCase().replaceAll(' ', '-') }>
+        <p class="eyebrow">EXTERNAL INSPIRATION · {source.license.toUpperCase()}</p><h3>{source.name}</h3><p>{source.note}</p>
+        <div class="attribution-links"><a href={source.home} target="_blank" rel="noreferrer">{source.name} references ↗</a><a href={source.licenseUrl} target="_blank" rel="noreferrer">License terms ↗</a></div>
+        <details><summary>Browse {source.entries.length} referenced families</summary><ul class="attribution-items">{source.entries.map(entry => <li data-attribution-component={entry.slug}><a href={specimenHref(entry)}>{entry.name}</a><a class="attribution-reference" href={entry.reference} target="_blank" rel="noreferrer">Specific reference ↗</a></li>)}</ul></details>
+      </article>)}
+      <article class="attribution-card attribution-card--reviewed" data-attribution-source="reviewed-not-adopted">
+        <p class="eyebrow">REVIEWED REFERENCES · NO SOURCE CODE USED</p><h3>Reviewed, not adapted</h3>
+        <p>These libraries were consulted while evaluating interaction behavior. They are acknowledged as research references, not as sources for a current catalog component.</p>
+        <ul class="reviewed-references">{reviewedOnly.map(source => <li><a href={source.url} target="_blank" rel="noreferrer">{source.name} ↗</a><span>{source.note}</span></li>)}</ul>
+      </article>
+    </div>
+    <p class="attribution-footnote">Implementation foundations: <a href="https://react.dev/" target="_blank" rel="noreferrer">React</a>, <a href="https://tailwindcss.com/" target="_blank" rel="noreferrer">Tailwind CSS</a>, <a href="https://motion.dev/" target="_blank" rel="noreferrer">Motion</a> and <a href="https://lucide.dev/" target="_blank" rel="noreferrer">Lucide React</a>. Full package notices and license details are maintained in the <a href="https://github.com/arifian853/design.arifian.web.id/blob/main/frontend/THIRD_PARTY_NOTICES.md" target="_blank" rel="noreferrer">third-party notices ↗</a>. “Arifian Original” identifies local authorship; it does not imply endorsement by or ownership of a referenced library.</p>
+  </section>
 </ShowcaseLayout>

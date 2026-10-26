@@ -69,6 +69,22 @@ test('every counted specimen is rendered on its linked destination', () => {
   }
 });
 
+test('About page attributes every portfolio, shadcn-adapted and externally inspired catalog family', () => {
+  const about = readFileSync('dist/about/index.html', 'utf8');
+  expect(about).toContain('Component origins and inspirations');
+  for (const entry of catalog.filter(item => ['portfolio-derived','shadcn-adapted','external-inspired'].includes(item.origin))) {
+    expect(about).toContain(`data-attribution-component="${entry.slug}"`);
+    expect(about).toContain(entry.name.replaceAll('&', '&amp;'));
+    if (entry.origin === 'external-inspired' && entry.reference) expect(about).toContain(entry.reference);
+  }
+  for (const label of ['shadcn/ui', 'Base UI', 'React Bits', 'Magic UI', 'Kibo UI', 'Animate UI', 'Cult UI']) expect(about).toContain(label);
+  expect(about).toContain('https://github.com/shadcn-ui/ui/blob/main/LICENSE.md');
+  expect(about).toContain('https://github.com/mui/base-ui/blob/master/LICENSE');
+  expect(about).toContain('https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md');
+  expect(about).toContain('https://github.com/magicuidesign/magicui/blob/main/LICENSE.md');
+  expect(about).toContain('https://github.com/shadcnblocks/kibo/blob/main/license.md');
+});
+
 test('legacy destinations are redirect artifacts backed by Netlify permanent redirects', () => {
   for (const [from,to] of [['workbench','/components/'],['components/data-display','/components/data/'],['components/layout','/components/surfaces/']]) {
     const html=readFileSync(`dist/${from}/index.html`,'utf8');
