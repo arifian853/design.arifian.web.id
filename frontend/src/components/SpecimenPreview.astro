@@ -1,0 +1,15 @@
+---
+import { CoreSpecimen, coreRenderers } from './CoreSpecimens';
+import { PortfolioSpecimen, portfolioRenderers } from './PortfolioSpecimens';
+import { PrimitiveSpecimen, primitiveRenderers } from './PrimitiveSpecimens';
+import { CuratedSpecimen, curatedRenderers } from './CuratedSpecimens';
+import { ChartSpecimen, chartRenderers } from './ChartGallery';
+interface Props { slug: string; }
+const { slug } = Astro.props;
+if (![coreRenderers,portfolioRenderers,primitiveRenderers,curatedRenderers,chartRenderers].some(map => Object.hasOwn(map,slug))) throw new Error('Unknown showcase specimen');
+---
+{Object.hasOwn(portfolioRenderers,slug) && <PortfolioSpecimen slug={slug} client:visible />}
+{Object.hasOwn(primitiveRenderers,slug) && <PrimitiveSpecimen slug={slug} client:visible />}
+{Object.hasOwn(curatedRenderers,slug) && <CuratedSpecimen slug={slug} client:visible />}
+{Object.hasOwn(chartRenderers,slug) && <ChartSpecimen slug={slug} client:visible />}
+{Object.hasOwn(coreRenderers,slug) && <CoreSpecimen slug={slug} client:visible />}

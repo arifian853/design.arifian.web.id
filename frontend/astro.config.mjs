@@ -6,6 +6,7 @@ import tailwind from '@tailwindcss/vite';
 export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
+  redirects: { '/components/data-display/': '/components/data/', '/components/layout/': '/components/surfaces/' },
   integrations: [react()],
   vite: {
     plugins: [tailwind()],

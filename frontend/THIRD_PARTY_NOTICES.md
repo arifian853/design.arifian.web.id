@@ -2,7 +2,7 @@
 
 ## shadcn/ui and Base UI
 
-The locally owned UI primitives retain shadcn/ui provenance and use the existing Base UI foundation. Their final appearance is customized through semantic Terracotta tokens, sharp geometry, typography, readable boundaries, and focus states. Existing local components were inspected rather than installed again; no registry item or dependency was added for this redesign.
+The locally owned UI primitives retain shadcn/ui provenance and use the existing Base UI foundation. Their final appearance is customized through semantic Terracotta tokens, sharp geometry, typography, readable boundaries, and focus states. Existing local components were inspected rather than installed again; no registry item or dependency was added for this update. New primitives are locally authored compositions against the installed Base UI 1.9.0 APIs and public documentation.
 
 The shadcn CLI is pinned to 4.22.1 and Base UI to 1.9.0 in the existing project. Package license files were inspected locally. Both are MIT licensed.
 
@@ -44,8 +44,6 @@ The installed packages retain their respective distributed license notices. This
 | Lucide React | ISC | Interface icons |
 | class-variance-authority 0.7.1 | Apache-2.0 | Primitive variants |
 | cn 0.5.0 | MIT | Class composition |
-| Recharts 3.8.0 | MIT | Existing chart foundation |
-| Zod 4.6.7 | MIT | Existing schema-validation dependency |
 
 ## Fonts
 
@@ -58,10 +56,28 @@ The frontend self-hosts Latin WOFF2 subsets of Inclusive Sans and Lexend Deca. B
 
 The portfolio’s actual frontend supplies the visual reference for palette, type, sharp surfaces, bento composition, navigation, and restrained interactions. This showcase uses independently authored synthetic content and removes portfolio-specific network behavior, personal records, and service configuration.
 
-“Arifian Original” identifies the system’s own design language. “Original composition” identifies authored specimen compositions. “shadcn / Base UI” identifies specimens composed from those primitives. These labels describe provenance, not the outcome of browser accessibility testing.
+`portfolio-derived` identifies owner-authored normalization of inspected portfolio behavior. The inspected portfolio repository declares no upstream license file; its code is not assigned MIT by this catalog. All specimen content is independently authored and synthetic. `arifian-original` identifies new local families. `shadcn-adapted` identifies reviewed primitive compositions; the retained MIT foundation does not automatically license unrelated authored work. `external-inspired` records a public interaction reference, with an original implementation and source-specific terms.
 
 ## Excluded supplier source
 
 No React Bits component source is retained in the redesigned frontend. The prior copied animation files have been replaced with small, independently authored Motion wrappers. Their license restricts component-library redistribution, so a notice is not treated as permission to repackage them. New motion specimens are authored against Motion and platform APIs.
 
 No premium component source, public registry distribution, or source-download interface is part of this showcase. Any future supplier addition requires its own source, license, dependency, accessibility, and normalization review.
+
+## Curated interaction references — 26 October 2026
+
+No component code or Pro source was copied from these references. They inform interaction vocabulary only; implementations use existing Motion, Base UI, Lucide and platform APIs. Catalog license notes distinguish the original implementation from the reference's terms.
+
+| Reference | Reviewed terms | Used for |
+| --- | --- | --- |
+| [React Bits license](https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md) | MIT + Commons Clause License Condition v1.0, copyright 2026 David Haz | Chroma grid, restrained blur/split reveal and short typing ideas |
+| [Magic UI license](https://github.com/magicuidesign/magicui/blob/main/LICENSE.md) | MIT, copyright Magic UI | Scripted terminal, local reading progress, pausable marquee and code comparison ideas |
+| [Kibo UI license](https://github.com/shadcnblocks/kibo/blob/main/license.md) | MIT terms, copyright 2023–present shadcnblocks | Local dropzone and removable tags behavior |
+
+React Bits permits use within applications, websites and products under its notice conditions, but restricts selling, sublicensing or redistributing its components, including bundled or ported versions. Its tools/exports have additional restrictions in the same license. This app-code repository does not redistribute React Bits component source, ports, tools or Pro code as a kit. Treat a notice as attribution, not a substitute for permission.
+
+The [Animate UI primitives catalog](https://animate-ui.com/docs/primitives) was reviewed as a motion reference; no Animate UI source, package, code adaptation or license claim is included. Existing canonical primitives receive short transitions rather than separate animated catalog entries. No Cult UI or Pro code is included.
+
+## Dependency cleanup
+
+Import and build-script inspection found no active consumers for the retired profile/private-preview/export path, placeholder cinematic/workbench files, legacy styles, or unused chart/command/OTP/toast wrappers. Their unused direct packages were removed: GSAP and its React adapter, Material Color Utilities, next-themes, Zod, Sonner, cmdk, input-otp and Recharts. Native SVG charts retain exact data alternatives. Transitive tools may still use their own copies of a removed direct dependency. Retained dependency versions were not upgraded.

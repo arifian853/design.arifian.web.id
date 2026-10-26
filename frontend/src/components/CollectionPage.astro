@@ -2,12 +2,12 @@
 import ShowcaseLayout from '../layouts/ShowcaseLayout.astro';
 import SpecimenCard from './SpecimenCard.astro';
 import type { CatalogEntry } from '../lib/catalog';
-interface Props { title: string; eyebrow: string; description: string; entries: CatalogEntry[]; }
-const { title, eyebrow, description, entries } = Astro.props;
+interface Props { title: string; eyebrow: string; description: string; entries: CatalogEntry[]; category?: string; }
+const { title, eyebrow, description, entries, category } = Astro.props;
 ---
 <ShowcaseLayout title={title} description={description}>
-  <section class="page-intro page-width"><p class="eyebrow">{eyebrow}</p><h1>{title}</h1><p>{description}</p></section>
+  <section class="page-intro page-width">{category && <nav class="breadcrumbs collection-breadcrumb" aria-label="Breadcrumb"><a href="/components/">Components</a><span aria-hidden="true">/</span><span aria-current="page">{title}</span></nav>}<p class="eyebrow">{eyebrow}</p><h1>{title}</h1><p>{description}</p>{category && <a href="/components/" class="text-link collection-back">← Back to all components</a>}</section>
   <div class="page-width collection-notice"><p>{entries.length} live specimens. All examples use synthetic content.</p><a href="/foundations/" class="text-link">Shared foundations <span aria-hidden="true">↗</span></a></div>
   <nav class="section-index page-width" aria-label={`${title} specimen index`}>{entries.map(entry => <a href={`#${entry.slug}`}>{entry.name}</a>)}</nav>
-  <section class="specimen-grid page-width" aria-label={`${title} specimens`}>{entries.map(entry => <SpecimenCard entry={entry} />)}</section>
+  <section class="specimen-grid collection-rhythm page-width" aria-label={`${title} specimens`}>{entries.map((entry,index) => <SpecimenCard entry={entry} featured={index === 0 || (category === 'forms' && entry.slug === 'date-picker') || (category === 'navigation' && entry.slug === 'sidebar')} />)}</section>
 </ShowcaseLayout>

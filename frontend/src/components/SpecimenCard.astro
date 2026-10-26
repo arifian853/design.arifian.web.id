@@ -1,12 +1,12 @@
 ---
-import { Specimen } from './Specimens';
-import type { CatalogEntry } from '../lib/catalog';
-interface Props { entry: CatalogEntry; }
-const { entry } = Astro.props;
-const wide = entry.kind === 'pattern' || ['carousel','profile-bento','table','chat-composer','message-board'].includes(entry.slug);
+import SpecimenPreview from './SpecimenPreview.astro';
+import { originLabel, type CatalogEntry } from '../lib/catalog';
+interface Props { entry: CatalogEntry; featured?: boolean; }
+const { entry, featured = false } = Astro.props;
+const wide = entry.kind === 'pattern' || ['carousel','table','chart','chat-composer','site-navbar','project-list-item','rich-response','resizable'].includes(entry.slug);
 ---
-<article id={entry.slug} class:list={['specimen-card', { 'wide-specimen': wide }]}>
-  <header><div><span>{entry.category.replace('-', ' ')} / {entry.status}</span><span>{entry.kind}</span></div><h2><a href={`#${entry.slug}`}>{entry.name}</a></h2><p>{entry.summary}</p></header>
-  <Specimen slug={entry.slug} client:visible />
-  <footer><span>{entry.origin} · {entry.license}</span><details><summary>Behavior & notes</summary><p>{entry.motion}</p><p>States: {entry.states.join(' / ')}. Synthetic content; changes stay in this preview.</p></details></footer>
+<article id={entry.slug} class:list={['specimen-card', { 'wide-specimen': wide, 'featured-specimen': featured, 'compact-specimen': !featured && ['kbd','spinner','theme-toggle','status-badge','section-eyebrow','project-meta','copy-button','number-field','rating'].includes(entry.slug) }]}>
+  <header><div><span>{entry.category.replace('-', ' ')} / {entry.maturity}</span><span>{entry.kind}</span></div><h2><a href={`#${entry.slug}`}>{entry.name}</a></h2><p>{entry.summary}</p></header>
+  <SpecimenPreview slug={entry.slug} />
+  <footer><span>{originLabel(entry.origin)}{entry.license ? ` · ${entry.license}` : ''}</span><details><summary>Behavior & notes</summary><p>{entry.motion}</p>{entry.reference && <p><a class="text-link" href={entry.reference} target="_blank" rel="noopener noreferrer">Reference ↗</a></p>}<p>States: {entry.states.join(' / ')}. Synthetic content; changes stay in this preview.</p></details></footer>
 </article>

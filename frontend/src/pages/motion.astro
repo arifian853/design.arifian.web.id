@@ -2,4 +2,4 @@
 import CollectionPage from '../components/CollectionPage.astro';
 import { catalog } from '../lib/catalog';
 ---
-<CollectionPage title="Motion" eyebrow="ATTENTION, WITH INTENT" description="Short transitions that clarify a change. Replay each study on demand, or select a static preview. Your reduced-motion preference is respected throughout." entries={catalog.filter(entry => entry.kind === 'motion')} />
+<CollectionPage title="Motion" eyebrow="ATTENTION, WITH INTENT" description="Short transitions that clarify a change. Replay each study on demand, or select a static preview. Your reduced-motion preference is respected throughout." entries={[...catalog.filter(entry => entry.kind === 'motion'), catalog.find(entry => entry.slug === 'spotlight-card')!]} />

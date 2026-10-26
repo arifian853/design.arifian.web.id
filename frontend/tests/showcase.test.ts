@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'bun:test';
-import { catalog, categories, catalogCounts, searchCatalog, validateCatalog } from '../src/lib/catalog';
+import { catalog, categories, catalogCounts, searchCatalog, validateCatalog, isOriginal } from '../src/lib/catalog';
 
 describe('public showcase catalog', () => {
   test('counts accepted, rendered entries without inflating variants', () => {
     expect(validateCatalog(catalog)).toBe(true);
     expect(catalogCounts.components).toBe(catalog.filter(item => item.kind === 'component').length);
-    expect(catalogCounts.originals).toBe(catalog.filter(item => item.original).length);
+    expect(catalogCounts.originals).toBe(catalog.filter(isOriginal).length);
     expect(catalogCounts.motion).toBe(catalog.filter(item => item.kind === 'motion').length);
     expect(catalogCounts.patterns).toBe(catalog.filter(item => item.kind === 'pattern').length);
     for (const category of categories) expect(catalog.some(item => item.category === category.slug)).toBe(true);
@@ -23,6 +23,6 @@ describe('public showcase catalog', () => {
     expect(validateCatalog([{ ...catalog[0], origin: 'unknown' }])).toBe(false);
     expect(validateCatalog(null)).toBe(false);
     expect(validateCatalog([{ ...catalog[0], states: null }])).toBe(false);
-    expect(validateCatalog([{ ...catalog[0], original: true, license: 'MIT' }])).toBe(false);
+    expect(validateCatalog([{ ...catalog[0], origin: 'external-inspired', reference: undefined }])).toBe(false);
   });
 });

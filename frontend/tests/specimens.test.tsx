@@ -1,10 +1,33 @@
 import { describe, expect, test } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { catalog, validateCatalog } from '../src/lib/catalog';
 import { specimenRenderers, Specimen } from '../src/components/Specimens';
 import { moveTask, sortRecords, sampleRecords } from '../src/lib/demo-state';
 
 describe('every catalog claim has a real specimen', () => {
+  test('every Astro route and shared template resolves its specimen references', () => {
+    const files = [...new Bun.Glob('**/*.astro').scanSync({ cwd: 'src' })];
+    const references: { file: string; slug: string }[] = [];
+    for (const file of files) {
+      const source = readFileSync(join('src', file), 'utf8');
+      for (const [tag] of source.matchAll(/<(?:Specimen|SpecimenPreview)\b[^>]*>/g)) {
+        const literal = tag.match(/\bslug=["']([^"']+)["']/)?.[1];
+        if (literal) references.push({ file, slug: literal });
+        else {
+          // Collection routes pass canonical catalog entries through SpecimenCard.
+          expect(tag, `${file}: audit this dynamic specimen expression`).toContain('slug={entry.slug}');
+          references.push(...catalog.map(entry => ({ file, slug: entry.slug })));
+        }
+      }
+    }
+    expect(references.length).toBeGreaterThan(0);
+    for (const { file, slug } of references) {
+      expect(Object.hasOwn(specimenRenderers, slug), `${file}: unresolved specimen ${slug}`).toBe(true);
+      expect(renderToStaticMarkup(<Specimen slug={slug} />)).toContain(`data-specimen="${slug}"`);
+    }
+  });
   test('renderer registry and catalog match exactly', () => {
     expect(Object.keys(specimenRenderers).sort()).toEqual(catalog.map(entry => entry.slug).sort());
     for (const entry of catalog) {
@@ -17,8 +40,8 @@ describe('every catalog claim has a real specimen', () => {
     expect(validateCatalog([{ ...catalog[0], slug: 'imaginary-component' }])).toBe(false);
   });
   test('original authorship does not grant a third-party license', () => {
-    expect(catalog.filter(entry => entry.original).every(entry => entry.license === 'Project terms')).toBe(true);
-    expect(catalog.some(entry => entry.origin === 'shadcn / Base UI' && entry.license === 'MIT')).toBe(true);
+    expect(catalog.filter(entry => entry.origin === 'portfolio-derived').every(entry => !entry.license?.startsWith('MIT'))).toBe(true);
+    expect(catalog.some(entry => entry.origin === 'shadcn-adapted' && entry.license?.includes('MIT'))).toBe(true);
   });
 });
 

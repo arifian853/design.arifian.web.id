@@ -4,9 +4,9 @@ import { Button } from './ui/button';
 type Theme = 'light' | 'dark';
 export default function ThemeToggle() {
   const [theme,setTheme] = useState<Theme>('light');
-  useEffect(() => { setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'); }, []);
+  useEffect(() => { const sync = () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'); sync(); const observer = new MutationObserver(sync); observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); return () => observer.disconnect(); }, []);
   function toggle() {
-    const next = theme === 'light' ? 'dark' : 'light';
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
     document.documentElement.style.colorScheme = next;
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#141413' : '#f5f4ed');

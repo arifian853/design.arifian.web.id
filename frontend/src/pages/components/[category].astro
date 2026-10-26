@@ -5,6 +5,7 @@ export function getStaticPaths() {
   return categories.map(category => ({ params: { category: category.slug }, props: { category } }));
 }
 const { category } = Astro.props;
-const entries = catalog.filter(entry => entry.kind === 'component' && entry.category === category.slug);
+const signature: Record<string,string> = { actions: 'button', forms: 'input', navigation: 'site-navbar', feedback: 'chat-message', overlays: 'project-popover', data: 'chart', media: 'carousel', surfaces: 'spotlight-card' };
+const entries = catalog.filter(entry => entry.kind === 'component' && entry.category === category.slug).sort((a,b) => Number(b.slug === signature[category.slug]) - Number(a.slug === signature[category.slug]));
 ---
-<CollectionPage title={category.name} eyebrow="COMPONENT COLLECTION" description={category.summary} entries={entries} />
+<CollectionPage title={category.name} eyebrow="COMPONENT COLLECTION" description={category.summary} entries={entries} category={category.slug} />

@@ -1,5 +1,5 @@
 ---
 import CollectionPage from '../components/CollectionPage.astro';
-import { catalog } from '../lib/catalog';
+import { originalCollection } from '../lib/catalog';
 ---
-<CollectionPage title="Arifian Originals" eyebrow="A FAMILIAR POINT OF VIEW" description="Editorial headings, sharp bento surfaces, project galleries and quiet interactions. Original specimens shaped by the portfolio’s visual language." entries={catalog.filter(entry => entry.original)} />
+<CollectionPage title="Arifian Originals" eyebrow="A FAMILIAR POINT OF VIEW" description="Editorial headings, sharp bento surfaces, project galleries and quiet interactions. A curated view of portfolio-derived families and components authored for this system." entries={originalCollection} />

@@ -199,4 +199,4 @@ Check geometry and typographic hierarchy before adding accent. Compare component
 
 ## Known Gaps & Acceptance
 
-The static showcase is implemented locally. Catalog lifecycle remains `preview`: browser keyboard, focus return, responsive rendering, contrast, reduced motion, hydration errors, screenshots and owner visual approval are pending host QA. Backend source was unavailable; no API or source-retrieval contract is inferred. No launch, indexing or distribution permission follows from this document.
+The static showcase is implemented locally. Catalog maturity remains `beta`: browser keyboard, focus return, responsive rendering, contrast, reduced motion, hydration errors, screenshots and owner visual approval are pending host QA. Backend source was unavailable; no API or source-retrieval contract is inferred. The current scoped GitHub/Netlify release follows the user-authorized parent QA workflow. Indexing and component distribution remain separately scoped.

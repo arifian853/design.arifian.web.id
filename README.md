@@ -8,16 +8,18 @@ The visual language is extracted from the portfolio’s current frontend impleme
 
 - `/` — an introduction with working interface specimens and metadata-derived catalog counts.
 - `/foundations/` — color roles, typography, spacing, geometry, borders, focus, and motion.
-- `/components/` — searchable components, with dedicated category routes for actions, forms, navigation, feedback, overlays, data display, media, and cards/layout.
-- `/originals/` — portfolio-derived interface language and original compositions.
+- `/components/` — canonical component families with independent category, origin and search filters; category routes cover Actions, Forms, Navigation, Feedback, Overlays, Data, Media and Surfaces.
+- `/originals/` — a curated secondary collection from the same canonical catalog.
 - `/motion/` — bounded, replayable interaction studies with a static reduced-motion alternative.
 - `/patterns/` — composed application, messaging, AI, and editorial examples.
 - `/about/` — purpose, design principles, and provenance.
-- `/workbench/` — a clearly labeled link to the component showcase.
+- `/workbench/` — a permanent redirect to the component showcase.
+
+Primary navigation is Foundations, Components, Patterns and Motion. The wordmark links home; About and Originals are secondary/footer destinations. Provenance uses explicit origins rather than a boolean. Variants stay inside their canonical family.
 
 ## Implementation
 
-Astro renders static pages. React and TypeScript provide interactive specimens, Tailwind supplies semantic styling, locally owned shadcn Base UI primitives provide accessible control anatomy, and Motion handles purposeful transitions. Dependencies remain in the existing lockfile; this redesign does not introduce a framework or install dependencies.
+Astro renders static pages. React and TypeScript provide interactive specimens, Tailwind supplies semantic styling, locally owned shadcn Base UI primitives provide accessible control anatomy, and Motion handles purposeful transitions. The cleanup removes unused legacy dependencies, keeps retained versions pinned, and adds no package or framework. New interaction specimens reuse the installed Base UI foundation or native platform controls.
 
 The project design contract is in [DESIGN.md](DESIGN.md). The [catalog documentation](docs/component-catalog.md) explains metadata, taxonomy, and how counts are derived. [Third-party notices](frontend/THIRD_PARTY_NOTICES.md) cover retained attribution and font licenses.
 
@@ -31,4 +33,4 @@ Automated accessibility results do not replace keyboard, responsive, reduced-mot
 
 The public frontend uses static showcase metadata and synthetic examples. It does not retrieve private documents, design profiles, source files, or backend catalog data. There is no public registry or component distribution workflow. No backend implementation was available for inspection, so this repository makes no claims about backend routes or an agent integration contract.
 
-The site remains `noindex`. This redesign is local and uncommitted; the README does not assert that these changes are live. Source publication, website publication, indexing, and any future authenticated catalog are separate decisions. A production release requires completed QA and explicit approval.
+The site remains `noindex`. Local implementation is not evidence of a production release. The current scoped GitHub/Netlify update is user-authorized after QA; final review, browser verification, commit, push, deploy and production checks remain parent-owned. Indexing and any future authenticated catalog remain separate decisions.

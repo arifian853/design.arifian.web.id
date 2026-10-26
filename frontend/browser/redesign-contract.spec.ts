@@ -6,11 +6,94 @@ const routes = [
   ['Foundations', '/foundations/'], ['Components', '/components/'],
   ['Actions', '/components/actions/'], ['Forms', '/components/forms/'],
   ['Navigation', '/components/navigation/'], ['Feedback', '/components/feedback/'],
-  ['Overlays', '/components/overlays/'], ['Data display', '/components/data-display/'],
-  ['Media', '/components/media/'], ['Layout', '/components/layout/'],
+  ['Overlays', '/components/overlays/'], ['Data', '/components/data/'],
+  ['Media', '/components/media/'], ['Surfaces', '/components/surfaces/'],
   ['Originals', '/originals/'], ['Motion', '/motion/'],
   ['Patterns', '/patterns/'], ['About', '/about/'],
 ] as const;
+
+const primaryLinks = ['/foundations/', '/components/', '/patterns/', '/motion/'];
+
+test('header and mobile navigation expose four primary links, theme toggle and footer collections', async ({ page }) => {
+  for (const width of [390, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/foundations/', { waitUntil: 'networkidle' });
+    const header = page.locator('[data-site-header]');
+    await expect(header.getByRole('link', { name: 'Arifian Design System home' })).toHaveAttribute('href', '/');
+    await expect(header.getByRole('button', { name: /Switch to (dark|light) mode/ })).toBeVisible();
+    const desktop = header.getByRole('navigation', { name: 'Main navigation', includeHidden: true });
+    expect(await desktop.locator('a').evaluateAll(links => links.map(link => link.getAttribute('href')))).toEqual(primaryLinks);
+    await expect(header.locator('a[href="/about/"], a[href="/originals/"]')).toHaveCount(0);
+    if (width <= 800) {
+      await header.locator('.mobile-navigation summary').click();
+      const mobile = header.getByRole('navigation', { name: 'Mobile navigation' });
+      await expect(mobile).toBeVisible();
+      expect(await mobile.locator('a').evaluateAll(links => links.map(link => link.getAttribute('href')))).toEqual(primaryLinks);
+      await expect(mobile.locator('a[aria-current="page"]')).toHaveAttribute('href', '/foundations/');
+    } else {
+      await expect(desktop).toBeVisible();
+      await expect(desktop.getByRole('link')).toHaveText(['Foundations', 'Components', 'Patterns', 'Motion']);
+    }
+    await expect(page.locator('.site-footer a[href="/about/"]')).toBeVisible();
+    await expect(page.locator('.site-footer a[href="/originals/"]')).toBeVisible();
+    await expect(page.locator('a[href="/about/"]')).toHaveCount(1);
+  }
+});
+
+for (const width of [801, 1024, 1440]) {
+  test(`active desktop underline spans the padded anchor at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/foundations/', { waitUntil: 'networkidle' });
+    await page.evaluate(() => document.fonts.ready);
+    const active = page.locator('.desktop-nav a[aria-current="page"]');
+    await expect(active).toHaveCount(1);
+    await expect(active).toHaveText('Foundations');
+    await expect(active).toBeVisible();
+    const dimensions = await active.evaluate(anchor => {
+      const range = document.createRange();
+      range.selectNodeContents(anchor);
+      const style = getComputedStyle(anchor);
+      const underline = getComputedStyle(anchor, '::after');
+      return {
+        anchorWidth: anchor.getBoundingClientRect().width,
+        textWidth: range.getBoundingClientRect().width,
+        paddingLeft: style.paddingLeft, paddingRight: style.paddingRight,
+        gap: getComputedStyle(anchor.parentElement!).gap,
+        content: underline.content, position: underline.position,
+        left: underline.left, right: underline.right, width: Number.parseFloat(underline.width),
+      };
+    });
+    expect(dimensions.anchorWidth - dimensions.textWidth).toBeGreaterThan(10);
+    expect(dimensions.paddingLeft).toBe('10px');
+    expect(dimensions.paddingRight).toBe('10px');
+    expect(dimensions.gap).toBe('6px');
+    expect(dimensions.content).not.toBe('none');
+    expect(dimensions.position).toBe('absolute');
+    expect(dimensions.left).toBe('0px');
+    expect(dimensions.right).toBe('0px');
+    expect(Math.abs(dimensions.width - dimensions.anchorWidth)).toBeLessThanOrEqual(1);
+  });
+}
+
+test('search, category and origin intersect and survive reload', async ({ page }) => {
+  await page.goto('/components/?q=thumbnail&category=media&origin=portfolio-derived', { waitUntil: 'networkidle' });
+  await expect(page.getByRole('searchbox', { name: 'Find a component' })).toHaveValue('thumbnail');
+  await expect(page.getByRole('button', { name: 'Media', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByLabel('Origin', { exact: true })).toHaveValue('portfolio-derived');
+  await expect(page.locator('.catalog-index a')).toHaveCount(1);
+  await expect(page.locator('.catalog-index a')).toHaveAttribute('href', '/components/media/#carousel');
+  await page.getByLabel('Origin', { exact: true }).selectOption('shadcn-adapted');
+  await expect(page.getByText('No matching components', { exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/origin=shadcn-adapted/);
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(page.getByRole('searchbox')).toHaveValue('thumbnail');
+  await expect(page.getByLabel('Origin', { exact: true })).toHaveValue('shadcn-adapted');
+  await expect(page.getByRole('button', { name: 'Media', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.catalog-index a')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Clear filters' }).click();
+  await expect(page).toHaveURL(/\/components\/$/);
+  await expect(page.locator('.catalog-index a')).toHaveCount(catalogCounts.components);
+});
 
 test('home introduces the Arifian Design System with real specimens and derived counts', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
@@ -32,6 +115,7 @@ test('home introduces the Arifian Design System with real specimens and derived 
 test('search and category filters change results and preserve a shareable URL', async ({ page }) => {
   await page.goto('/components/', { waitUntil: 'networkidle' });
   const search = page.getByRole('searchbox', { name: 'Find a component' });
+  await page.getByLabel('Origin', { exact: true }).selectOption('shadcn-adapted');
   await search.fill('dialog');
   await expect(page.locator('.catalog-index .index-card')).toHaveCount(1);
   await expect(page.locator('.catalog-index a')).toHaveAttribute('href', '/components/overlays/#dialog');
@@ -58,7 +142,7 @@ async function readySpecimen(page: import('@playwright/test').Page, id: string) 
 test('fields validate, selections use keyboard and no submission leaves the page', async ({ page }) => {
   const submissions: string[] = [];
   page.on('request', request => { if (request.method() !== 'GET') submissions.push(request.url()); });
-  await page.goto('/components/forms/', { waitUntil: 'networkidle' });
+  await page.goto('/patterns/', { waitUntil: 'networkidle' });
   const validation = await readySpecimen(page, 'validation');
   await validation.getByRole('button', { name: 'Check address' }).click();
   const email = validation.getByLabel('Email address');
@@ -67,6 +151,7 @@ test('fields validate, selections use keyboard and no submission leaves the page
   await email.fill('alex@example.test');
   await validation.getByRole('button', { name: 'Check address' }).click();
   await expect(validation.getByRole('status')).toContainText('Address looks good');
+  await page.goto('/components/forms/', { waitUntil: 'networkidle' });
   const select = await readySpecimen(page, 'select');
   await select.getByRole('combobox').focus();
   await page.keyboard.press('ArrowDown');
@@ -111,12 +196,12 @@ test('dark appearance persists and open overlay surfaces stay opaque and sharp',
 });
 
 test('table sorting, chart data and local patterns perform real state changes', async ({ page }) => {
-  await page.goto('/components/data-display/', { waitUntil: 'networkidle' });
+  await page.goto('/components/data/', { waitUntil: 'networkidle' });
   const table = await readySpecimen(page, 'table');
   await expect(table.locator('tbody tr').first()).toContainText('Atlas');
   await table.getByRole('button', { name: 'Project' }).click();
   await expect(table.locator('tbody tr').first()).toContainText('Index');
-  const chart = await readySpecimen(page, 'bar-chart');
+  const chart = await readySpecimen(page, 'chart');
   await chart.getByText('View exact data').click();
   await expect(chart.getByRole('table')).toContainText('80');
   await page.goto('/patterns/', { waitUntil: 'networkidle' });
@@ -132,7 +217,7 @@ test('table sorting, chart data and local patterns perform real state changes', 
 test('motion honors live reduced-motion preference and static preview', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/motion/', { waitUntil: 'networkidle' });
-  const reveal = await readySpecimen(page, 'fade-reveal');
+  const reveal = await readySpecimen(page, 'reveal');
   await reveal.getByRole('button', { name: 'Replay reveal' }).click();
   await expect(reveal.getByRole('status')).toContainText('Static mode');
   await expect(reveal.locator('.motion-phrase')).toHaveCSS('transform', 'none');
@@ -214,12 +299,21 @@ test('showcase pages never call private or agent-only endpoints', async ({ page 
   expect(forbidden).toEqual([]);
 });
 
-test('legacy workbench safely redirects or links to the component showcase', async ({ page }) => {
+test('legacy workbench redirects to the component showcase', async ({ page }) => {
   await page.goto('/workbench/', { waitUntil: 'domcontentloaded' });
-  if (!/\/components\/?$/.test(new URL(page.url()).pathname)) {
-    await expect(page.locator('a[href="/components/"]').first()).toBeVisible();
-  }
+  await expect(page).toHaveURL(/\/components\/$/);
 });
+
+for (const [legacy, destination] of [
+  ['/components/data-display/', '/components/data/'],
+  ['/components/layout/', '/components/surfaces/'],
+]) {
+  test(`${legacy} redirects to ${destination}`, async ({ page }) => {
+    await page.goto(legacy, { waitUntil: 'networkidle' });
+    await expect(page).toHaveURL(new RegExp(`${destination}$`));
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  });
+}
 
 test('mobile home keeps the header and specimens inside the viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
