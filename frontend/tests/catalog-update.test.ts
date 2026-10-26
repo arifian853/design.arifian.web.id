@@ -35,10 +35,9 @@ test('provenance validates maturity, canonical families, references and unknown 
   expect(validateCatalog([catalog[0], {...catalog[1], family:catalog[0].family ?? catalog[0].slug}])).toBe(false);
 });
 
-test('primary IA has four destinations and workbench is a redirect', () => {
+test('primary IA includes Originals and workbench is a redirect', () => {
   const layout = readFileSync('src/layouts/ShowcaseLayout.astro','utf8');
-  expect(layout).toContain("['Foundations','/foundations/'],['Components','/components/'],['Patterns','/patterns/'],['Motion','/motion/']");
-  expect(layout).not.toContain("['Originals','/originals/']");
+  expect(layout).toContain("['Foundations','/foundations/'],['Components','/components/'],['Patterns','/patterns/'],['Motion','/motion/'],['Originals','/originals/']");
   expect(layout).not.toContain("['About','/about/']");
   expect(readFileSync('src/pages/workbench.astro','utf8')).toContain("Astro.redirect('/components/', 301)");
   const css = readFileSync('src/styles/global.css','utf8');

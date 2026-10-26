@@ -12,9 +12,9 @@ const routes = [
   ['Patterns', '/patterns/'], ['About', '/about/'],
 ] as const;
 
-const primaryLinks = ['/foundations/', '/components/', '/patterns/', '/motion/'];
+const primaryLinks = ['/foundations/', '/components/', '/patterns/', '/motion/', '/originals/'];
 
-test('header and mobile navigation expose four primary links, theme toggle and footer collections', async ({ page }) => {
+test('header and mobile navigation expose five primary links, theme toggle and footer collections', async ({ page }) => {
   for (const width of [390, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/foundations/', { waitUntil: 'networkidle' });
@@ -23,7 +23,7 @@ test('header and mobile navigation expose four primary links, theme toggle and f
     await expect(header.getByRole('button', { name: /Switch to (dark|light) mode/ })).toBeVisible();
     const desktop = header.getByRole('navigation', { name: 'Main navigation', includeHidden: true });
     expect(await desktop.locator('a').evaluateAll(links => links.map(link => link.getAttribute('href')))).toEqual(primaryLinks);
-    await expect(header.locator('a[href="/about/"], a[href="/originals/"]')).toHaveCount(0);
+    await expect(header.locator('a[href="/about/"]')).toHaveCount(0);
     if (width <= 800) {
       await header.locator('.mobile-navigation summary').click();
       const mobile = header.getByRole('navigation', { name: 'Mobile navigation' });
@@ -32,7 +32,7 @@ test('header and mobile navigation expose four primary links, theme toggle and f
       await expect(mobile.locator('a[aria-current="page"]')).toHaveAttribute('href', '/foundations/');
     } else {
       await expect(desktop).toBeVisible();
-      await expect(desktop.getByRole('link')).toHaveText(['Foundations', 'Components', 'Patterns', 'Motion']);
+      await expect(desktop.getByRole('link')).toHaveText(['Foundations', 'Components', 'Patterns', 'Motion', 'Originals']);
     }
     await expect(page.locator('.site-footer a[href="/about/"]')).toBeVisible();
     await expect(page.locator('.site-footer a[href="/originals/"]')).toBeVisible();

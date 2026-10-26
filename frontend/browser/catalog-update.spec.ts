@@ -8,11 +8,12 @@ async function specimen(page:Page,id:string) {
 }
 test('primary taxonomy and full item underline preserve hover and keyboard focus',async({page})=>{
   await page.setViewportSize({width:1440,height:1000});
-  for(const route of ['/foundations/','/components/','/components/forms/','/patterns/','/motion/']) {
+  for(const route of ['/foundations/','/components/','/components/forms/','/patterns/','/motion/','/originals/']) {
     await page.goto(route,{waitUntil:'networkidle'});
     const nav=page.getByRole('navigation',{name:'Main navigation',exact:true});
-    await expect(nav.getByRole('link')).toHaveText(['Foundations','Components','Patterns','Motion']);
+    await expect(nav.getByRole('link')).toHaveText(['Foundations','Components','Patterns','Motion','Originals']);
     const active=nav.locator('[aria-current="page"]');await expect(active).toHaveCount(1);
+    const expectedActiveHref=route.startsWith('/components/')?'/components/':route;await expect(active).toHaveAttribute('href',expectedActiveHref);
     const box=await active.evaluate(link=>{const item=link.getBoundingClientRect();const line=getComputedStyle(link,'::after');const range=document.createRange();range.selectNodeContents(link);return {item:item.width,text:range.getBoundingClientRect().width,line:parseFloat(line.width),left:line.left,right:line.right,position:line.position};});
     expect(box.line).toBeCloseTo(box.item,1);expect(box.item).toBeGreaterThan(box.text+10);expect(box.left).toBe('0px');expect(box.right).toBe('0px');expect(box.position).toBe('absolute');
     await active.focus();await expect(active).toHaveCSS('outline-style','solid');await active.hover();
@@ -20,7 +21,7 @@ test('primary taxonomy and full item underline preserve hover and keyboard focus
   }
   await page.setViewportSize({width:390,height:844});await page.goto('/components/');
   await page.locator('.mobile-navigation summary').click();
-  await expect(page.getByRole('navigation',{name:'Mobile navigation'}).getByRole('link')).toHaveText(['Foundations↗','Components↗','Patterns↗','Motion↗']);
+  await expect(page.getByRole('navigation',{name:'Mobile navigation'}).getByRole('link')).toHaveText(['Foundations↗','Components↗','Patterns↗','Motion↗','Originals↗']);
 });
 test('category origin and alias search survive reload, history navigation and clearing',async({page})=>{
   await page.goto('/components/?category=media&origin=portfolio-derived&q=thumbnail',{waitUntil:'networkidle'});
