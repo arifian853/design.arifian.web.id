@@ -5,6 +5,12 @@ import { catalog, catalogCounts, categories } from '../src/lib/catalog';
 
 // Artifact checks: build first; never silently skip an absent build.
 const routes = ['/', '/foundations/', '/components/', ...categories.map(c => `/components/${c.slug}/`), '/originals/', '/motion/', '/patterns/', '/about/'];
+test('home hero credits adopted component and interaction inspirations with a path to full attributions', () => {
+  const home = readFileSync('dist/index.html', 'utf8');
+  expect(home).toContain('Inspired by the arifian.dev portfolio, shadcn/ui, Base UI, React Bits, Magic UI, and Kibo UI.');
+  expect(home).toContain('href="/about/">Full attributions');
+});
+
 test('every showcase route is generated, readable and noindex', () => {
   for (const route of routes) {
     const html = readFileSync(`dist${route}index.html`, 'utf8');
