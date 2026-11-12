@@ -1,6 +1,7 @@
 ---
 import ShowcaseLayout from '../layouts/ShowcaseLayout.astro';
 import SpecimenPreview from '../components/SpecimenPreview.astro';
+import BrandSwatches from '../components/BrandSwatches';
 const brand = [['50','#faf5f2'],['200','#e9c6b9'],['400','#d97757'],['500','#c96442'],['600','#be5c3a'],['700','#b55333'],['800','#964225'],['950','#3f1b10']];
 const roles = [
   ['Background','#f5f4ed','#141413'],['Foreground','#141413','#faf9f5'],['Card','#faf9f5','#30302e'],
@@ -12,7 +13,7 @@ const roles = [
   <section class="page-intro page-width"><p class="eyebrow">THE SHARED LANGUAGE</p><h1>Foundations.</h1><p>Warmth in the surfaces. Precision in the structure. A small set of decisions that carries through every component.</p></section>
   <nav class="section-index page-width" aria-label="Foundation index">{['Color','Typography','Space','Structure','Focus','Motion'].map(label => <a href={`#${label.toLowerCase()}`}>{label}</a>)}</nav>
   <div class="foundations-grid page-width">
-    <section id="color" class="foundation-panel wide-specimen"><p class="eyebrow">01 / COLOR</p><h2>Terracotta, in good measure.</h2><p>A warm accent family for emphasis and feedback. Neutral surfaces do most of the work.</p><div class="swatch-grid">{brand.map(([step,color]) => <figure><div class="color-swatch" style={`background:${color}`} /><figcaption><strong>Brand {step}</strong><code>{color}</code></figcaption></figure>)}</div>
+    <section id="color" class="foundation-panel wide-specimen"><p class="eyebrow">01 / COLOR</p><h2>Terracotta, in good measure.</h2><p>A warm accent family for emphasis and feedback. Neutral surfaces do most of the work.</p><BrandSwatches colors={brand} client:load />
       <div class="surface-pair"><div data-theme="light"><p class="eyebrow">LIGHT</p><h3>Parchment & ivory.</h3><p>Near-black text on a warm reading surface.</p><span class="surface-example">A quiet card surface</span></div><div data-theme="dark"><p class="eyebrow">DARK</p><h3>Warm charcoal.</h3><p>Ivory text with the same sharp structure.</p><span class="surface-example">A quiet card surface</span></div></div>
       <div class="table-wrap"><table class="data-alternative"><caption>Semantic color roles · light and dark</caption><thead><tr><th scope="col">Role</th><th scope="col">Light</th><th scope="col">Dark</th></tr></thead><tbody>{roles.map(([role,light,dark]) => <tr><th scope="row">{role}</th><td><code>{light}</code></td><td><code>{dark}</code></td></tr>)}</tbody></table></div><p class="foundation-note">Subtle surface borders define grouping. Controls use a stronger boundary and focus outline so they stay easy to locate. Brand 400 and 500 are accents; small text uses darker terracotta in light mode.</p>
     </section>

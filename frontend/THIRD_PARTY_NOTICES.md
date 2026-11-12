@@ -44,6 +44,10 @@ The installed packages retain their respective distributed license notices. This
 | Lucide React | ISC | Interface icons |
 | class-variance-authority 0.7.1 | Apache-2.0 | Primitive variants |
 | cn 0.5.0 | MIT | Class composition |
+| [MCP TypeScript SDK 1.32.2](https://github.com/modelcontextprotocol/typescript-sdk) (`@modelcontextprotocol/sdk`) | MIT, copyright (c) 2024 Anthropic, PBC | Local STDIO public metadata server and protocol tests; not bundled into the static client |
+| [Zod 4.6.7](https://github.com/colinhacks/zod) | MIT, copyright (c) 2025 Colin McDonnell | Required MCP SDK validation peer |
+
+The SDK is the official TypeScript implementation; its repository name is `typescript-sdk`, while the installed v1 npm package is `@modelcontextprotocol/sdk`. See the [v1 SDK documentation](https://ts.sdk.modelcontextprotocol.io/) and [STDIO transport guide](https://github.com/modelcontextprotocol/typescript-sdk/blob/v1.x/docs/server.md#stdio). These two exact versions were already installed and locked transitively; local MCP access promotes them to pinned direct dependencies without an install or source copying. Their distributed MIT notices remain in their respective packages. The MIT terms above also apply to these packages with their respective copyright lines.
 
 ## Fonts
 
@@ -80,4 +84,4 @@ The [Animate UI primitives catalog](https://animate-ui.com/docs/primitives) was 
 
 ## Dependency cleanup
 
-Import and build-script inspection found no active consumers for the retired profile/private-preview/export path, placeholder cinematic/workbench files, legacy styles, or unused chart/command/OTP/toast wrappers. Their unused direct packages were removed: GSAP and its React adapter, Material Color Utilities, next-themes, Zod, Sonner, cmdk, input-otp and Recharts. Native SVG charts retain exact data alternatives. Transitive tools may still use their own copies of a removed direct dependency. Retained dependency versions were not upgraded.
+Import and build-script inspection found no active consumers for the retired profile/private-preview/export path, placeholder cinematic/workbench files, legacy styles, or unused chart/command/OTP/toast wrappers. Their unused direct packages were removed: GSAP and its React adapter, Material Color Utilities, next-themes, Zod, Sonner, cmdk, input-otp and Recharts. Zod is now an explicit dependency again for the local MCP SDK's required validation peer, using the already locked version. Native SVG charts retain exact data alternatives. Transitive tools may still use their own copies of a removed direct dependency. Retained dependency versions were not upgraded.

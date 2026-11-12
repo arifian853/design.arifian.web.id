@@ -5,6 +5,29 @@ import { catalog, catalogCounts, categories } from '../src/lib/catalog';
 
 // Artifact checks: build first; never silently skip an absent build.
 const routes = ['/', '/foundations/', '/components/', ...categories.map(c => `/components/${c.slug}/`), '/originals/', '/motion/', '/patterns/', '/about/'];
+test('Foundations exposes exactly the approved brand values with adjacent accessible copy actions', () => {
+  const html = readFileSync('dist/foundations/index.html', 'utf8');
+  const values = [['50','#faf5f2'],['200','#e9c6b9'],['400','#d97757'],['500','#c96442'],['600','#be5c3a'],['700','#b55333'],['800','#964225'],['950','#3f1b10']];
+  expect([...html.matchAll(/class="brand-swatch-card"/g)]).toHaveLength(values.length);
+  for (const [step, hex] of values) {
+    expect(html).toContain(`aria-label="Copy Brand ${step} ${hex}"`);
+    expect(html).toContain(`<code>${hex}</code>`);
+    expect(html).toContain(`background-color:${hex}`);
+  }
+  expect([...html.matchAll(/role="status" aria-live="polite" aria-atomic="true"/g)]).toHaveLength(values.length);
+});
+
+test('About credits Claude and its creator with official references and independent authorship', () => {
+  const html = readFileSync('dist/about/index.html', 'utf8');
+  expect(html).toContain('data-attribution-source="claude-anthropic"');
+  expect(html).toContain('Terracotta direction is inspired by Claude, created by Anthropic');
+  expect(html).toContain('Arifian Saputra');
+  expect(html).toContain('href="https://claude.ai/" target="_blank" rel="noreferrer"');
+  expect(html).toContain('href="https://www.anthropic.com/" target="_blank" rel="noreferrer"');
+  expect(html).toContain('not affiliated with or endorsed by Anthropic');
+  expect(html).toContain('does not copy official Claude or Anthropic design tokens or source code');
+});
+
 test('home hero credits adopted component and interaction inspirations with a path to full attributions', () => {
   const home = readFileSync('dist/index.html', 'utf8');
   expect(home).toContain('Inspired by the arifian.dev portfolio, shadcn/ui, Base UI, React Bits, Magic UI, and Kibo UI.');

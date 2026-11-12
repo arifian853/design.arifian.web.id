@@ -1,6 +1,44 @@
 import { expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
-import { catalog, catalogCounts, searchCatalog, validateCatalog, readCatalogFilters, writeCatalogFilters } from '../src/lib/catalog';
+import { catalog, categories, catalogCounts, originalCollection, searchCatalog, validateCatalog, readCatalogFilters, writeCatalogFilters } from '../src/lib/catalog';
+
+test('eight canonical categories retain their approved order and unique identities', () => {
+  expect(categories.map(({ slug, name }) => [slug, name])).toEqual([
+    ['actions', 'Actions'], ['forms', 'Forms'], ['navigation', 'Navigation'],
+    ['feedback', 'Feedback'], ['overlays', 'Overlays'], ['data', 'Data'],
+    ['media', 'Media'], ['surfaces', 'Surfaces'],
+  ]);
+  expect(new Set(categories.map(category => category.slug)).size).toBe(8);
+  expect(new Set(catalog.map(entry => entry.slug)).size).toBe(catalog.length);
+  expect(new Set(catalog.map(entry => entry.family ?? entry.slug)).size).toBe(catalog.length);
+});
+
+test('related primitives retain distinct families while variants stay in their canonical family', () => {
+  for (const group of [
+    ['button', 'button-group', 'toggle-group', 'copy-button'],
+    ['select', 'combobox', 'calendar', 'date-picker'],
+    ['dialog', 'sheet', 'drawer', 'popover', 'project-popover'],
+    ['accordion', 'collapsible'], ['timeline', 'experience-item'],
+  ]) {
+    const entries = group.map(slug => catalog.find(entry => entry.slug === slug)!);
+    expect(entries.every(entry => entry?.kind === 'component')).toBe(true);
+    expect(new Set(entries.map(entry => entry.family ?? entry.slug)).size).toBe(group.length);
+  }
+  for (const [slug, variant] of [['button', 'Loading'], ['chart', 'Donut'], ['reveal', 'Static'], ['combobox', 'Multiple'], ['date-picker', 'Range complete']]) {
+    expect(catalog.filter(entry => (entry.family ?? entry.slug) === slug)).toHaveLength(1);
+    expect(catalog.find(entry => entry.slug === slug)?.states).toContain(variant);
+  }
+});
+
+test('kinds partition the inventory and Originals reuses entries across those kinds', () => {
+  expect(catalogCounts.components + catalogCounts.patterns + catalogCounts.motion).toBe(catalog.length);
+  expect(originalCollection).toEqual(catalog.filter(entry => ['portfolio-derived', 'arifian-original'].includes(entry.origin)));
+  for (const entry of originalCollection) expect(catalog.includes(entry)).toBe(true);
+  expect(new Set(originalCollection.map(entry => entry.kind))).toEqual(new Set(['component', 'pattern', 'motion']));
+  // A second presentation or provenance label cannot create another family.
+  expect(validateCatalog([catalog[0], { ...catalog[1], family: catalog[0].family, kind: 'motion', origin: 'portfolio-derived' }])).toBe(false);
+  expect(validateCatalog([{ ...catalog[0], family: undefined }, { ...catalog[1], family: catalog[0].slug }])).toBe(false);
+});
 
 test('canonical families replace state and provenance duplicates', () => {
   for (const slug of ['loading-button','bar-chart','line-chart','donut-chart','stagger-reveal','spotlight-motion','message-board']) expect(catalog.some(e => e.slug === slug)).toBe(false);

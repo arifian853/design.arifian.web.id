@@ -4,7 +4,9 @@ The public catalog is static display metadata for live synthetic specimens. It h
 
 ## Information architecture
 
-The wordmark links home. Primary navigation is Foundations, Components, Patterns, Motion, followed by the theme control. About and the Arifian Originals collection are secondary/footer destinations. `/workbench/` redirects to `/components/`; the former data-display and layout category URLs redirect to Data and Surfaces.
+The wordmark links home. Primary navigation is Foundations, Components, Patterns, Motion, Originals, followed by the theme control. About is a footer destination. `/workbench/` redirects to `/components/`; the former data-display and layout category URLs redirect to Data and Surfaces.
+
+The eight canonical categories retain the order below. Categories describe purpose; `kind` distinguishes a component family from a pattern or motion study. Sharing a category does not make two primitives duplicates.
 
 | Category | Scope |
 | --- | --- |
@@ -18,6 +20,8 @@ The wordmark links home. Primary navigation is Foundations, Components, Patterns
 | Surfaces | Cards, editorial headings, disclosures and resizable layouts |
 
 Originals is a view of the same canonical catalog, selecting `portfolio-derived` and `arifian-original` entries across kinds. Its total overlaps the component/motion/pattern totals. It is never an additional kind or a parallel inventory.
+
+The audited inventory contains 84 component families, 16 patterns and 9 motion studies: 109 distinct entries. The 71 Originals are a provenance filter over those entries, not an additional 71 families. Component counts by category are Actions 4, Forms 17, Navigation 13, Feedback 12, Overlays 10, Data 10, Media 5 and Surfaces 13. Counts are derived from metadata; variants, states and repeated presentations do not increase them.
 
 ## Metadata
 
@@ -43,6 +47,10 @@ Validation rejects unknown fields, unsafe slugs, duplicate slugs/families, unsup
 The component index intersects category, origin and search independently. Search covers name, aliases, purpose, tags, states and motion/behavior notes. Query parameters are `category`, `origin`, and `q`; reload and history navigation restore them. Invalid category/origin values resolve to All. Clearing resets all three filters. Counts derive from canonical entries and never from variants or the number of preview cards on a page.
 
 The deduplication rules are explicit:
+
+- Each entry has one unique slug and canonical family identity across all kinds and origins. Tests pin category order and reject duplicate slugs or family identities, including a family repeated under another kind or origin.
+- Related primitives remain distinct when their metadata and renderers describe different controls: Button, Button Group, Segmented Control and Copy Button; Select and Combobox; Calendar and Date Picker; Dialog, Sheet and Drawer; Accordion and Collapsible. Composition or shared implementation alone does not justify merging them.
+- Patterns compose canonical families; motion studies have their own `motion` kind. Neither is counted as an extra component family. Origins and Originals filter existing entries without duplicating the catalog.
 
 - Loading belongs to Button. Clipboard actions remain a separate family; response/code copying reuse that behavior.
 - Chart includes bar, line, area, donut, radial, radar and compact variants with exact data alternatives.
